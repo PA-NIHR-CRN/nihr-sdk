@@ -27,9 +27,22 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Extract version from tag
+      - name: Determine version from tag or input
         id: get_version
-        run: echo "##[set-output name=VERSION;]${GITHUB_REF#refs/tags/v}"
+        run: |
+            if [ "${{ github.event_name }}" == "push" ]; then
+                # Extract the version from the pushed tag (e.g., v1.0.0 -> 1.0.0)
+                echo "Extracting version from tag: ${GITHUB_REF#refs/tags/v}"
+                echo "##[set-output name=VERSION;]${GITHUB_REF#refs/tags/v}"
+            elif [ -n "${{ github.event.inputs.version }}" ]; then
+                # Use the version from the manual input
+                echo "Using manually provided version: ${{ github.event.inputs.version }}"
+                echo "##[set-output name=VERSION;]${{ github.event.inputs.version }}"
+            else
+                # Fail if no version is provided
+                echo "Error: No version provided via input or tag."
+                exit 1
+            fi
 
       - name: Build the solution
         run: dotnet build --configuration Release

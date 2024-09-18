@@ -3,12 +3,53 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NIHR.NotificationService", "NIHR.NotificationService\NIHR.NotificationService.csproj", "{3B7568F6-7329-4B35-8B26-1D2FAB1E354E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NIHR.Infrastructure.EntityFrameworkCore.MySql", "NIHR.Infrastructure.EntityFrameworkCore.MySql\NIHR.Infrastructure.EntityFrameworkCore.MySql.csproj", "{9E677B7D-1F9D-4FE1-BB8A-5EE76C25332B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NIHR.Infrastructure.EntityFrameworkCore", "NIHR.Infrastructure.EntityFrameworkCore\NIHR.Infrastructure.EntityFrameworkCore.csproj", "{D74711C9-2F2B-49C4-BE1A-7DFB9C922B12}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NIHR.Infrastructure.AspNetCore", "NIHR.Infrastructure.AspNetCore\NIHR.Infrastructure.AspNetCore.csproj", "{43B86C84-6EC1-4339-9AC1-F19F49B869A6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NIHR.Infrastructure", "NIHR.Infrastructure\NIHR.Infrastructure.csproj", "{79B0AD0B-0463-4B1D-86F5-09365A0B2A22}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NIHR.GovUk.AspNetCore.Mvc", "NIHR.GovUk.AspNetCore.Mvc\NIHR.GovUk.AspNetCore.Mvc.csproj", "{4BDECC67-0431-4744-B46B-9C51DC53432F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3B7568F6-7329-4B35-8B26-1D2FAB1E354E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B7568F6-7329-4B35-8B26-1D2FAB1E354E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B7568F6-7329-4B35-8B26-1D2FAB1E354E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B7568F6-7329-4B35-8B26-1D2FAB1E354E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E677B7D-1F9D-4FE1-BB8A-5EE76C25332B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E677B7D-1F9D-4FE1-BB8A-5EE76C25332B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E677B7D-1F9D-4FE1-BB8A-5EE76C25332B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E677B7D-1F9D-4FE1-BB8A-5EE76C25332B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D74711C9-2F2B-49C4-BE1A-7DFB9C922B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D74711C9-2F2B-49C4-BE1A-7DFB9C922B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D74711C9-2F2B-49C4-BE1A-7DFB9C922B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D74711C9-2F2B-49C4-BE1A-7DFB9C922B12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43B86C84-6EC1-4339-9AC1-F19F49B869A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43B86C84-6EC1-4339-9AC1-F19F49B869A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43B86C84-6EC1-4339-9AC1-F19F49B869A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43B86C84-6EC1-4339-9AC1-F19F49B869A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79B0AD0B-0463-4B1D-86F5-09365A0B2A22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79B0AD0B-0463-4B1D-86F5-09365A0B2A22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79B0AD0B-0463-4B1D-86F5-09365A0B2A22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79B0AD0B-0463-4B1D-86F5-09365A0B2A22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BDECC67-0431-4744-B46B-9C51DC53432F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BDECC67-0431-4744-B46B-9C51DC53432F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BDECC67-0431-4744-B46B-9C51DC53432F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BDECC67-0431-4744-B46B-9C51DC53432F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4B7CEEE-17F9-438A-BB58-1DC291BA4B12}
 	EndGlobalSection
 EndGlobal

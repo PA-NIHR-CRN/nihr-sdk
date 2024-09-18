@@ -1,0 +1,36 @@
+@using NIHR.Infrastructure.AspNetCore
+@using NIHR.GovUk.AspNetCore.Mvc
+<style>
+    .govuk-notification-banner:focus {
+        outline: 3px solid #FED47A
+    }
+</style>
+@{
+    var notification = TempData.Get<NotificationBannerModel>("Notification");
+}
+
+@if (notification != null)
+{
+    <div class="govuk-notification-banner @(notification.IsSuccess ? "govuk-notification-banner--success" : "govuk-notification-banner--failure")" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                @notification.Title
+            </h2>
+        </div>
+        <div class="govuk-notification-banner__content">
+            @if (notification.Heading is not null)
+            {
+                <h3 class="govuk-notification-banner__heading">
+                    @Html.Raw(notification.Heading)
+                </h3>
+            }
+
+            @if (notification.Body is not null || notification.LinkText is not null)
+            {
+                <p class="govuk-body">
+                    @Html.Raw(notification.Body) <a class="govuk-notification-banner__link" href="@Html.Raw(@notification.LinkUrl)">@notification.LinkText</a>
+                </p>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,162 @@
+@using NIHR.Infrastructure.Paging
+@model NIHR.Infrastructure.Paging.IPage
+@inject IPaginationService PaginationService
+@{
+    IEnumerable<int?> PageLinksToDisplay()
+    {
+        var currentPage = Model.CurrentPage;
+        var totalPages = Model.TotalPages;
+
+        List<int?> pages = new List<int?>();
+
+        if (totalPages == 0)
+        {
+            return pages;
+        }
+
+        var delta = 9;
+
+        if (totalPages > delta)
+        {
+            delta = currentPage > 4 && currentPage < totalPages - 3 ? 2 : 4;
+        }
+
+        var startIndex = (int)Math.Round(currentPage - delta / (double)2);
+        var endIndex = (int)Math.Round(currentPage + delta / (double)2);
+
+        if (startIndex - 1 == 1 || endIndex + 1 == totalPages)
+        {
+            startIndex += 1;
+            endIndex += 1;
+        }
+
+        var to = Math.Min(totalPages, delta + 1);
+        for (int i = 1; i <= to; i++)
+        {
+            pages.Add(i);
+        }
+
+        if (currentPage > delta)
+        {
+            pages.Clear();
+            var from = Math.Min(startIndex, totalPages - delta);
+            to = Math.Min(endIndex, totalPages);
+            for (int i = from; i <= to; i++)
+            {
+                pages.Add(i);
+            }
+        }
+
+        if (pages[0] != 1)
+        {
+            if (pages.Count() + 1 != totalPages)
+            {
+                pages.Insert(0, null);
+            }
+            pages.Insert(0, 1);
+        }
+
+        if (pages.Last() < totalPages)
+        {
+            if (pages.Count() + 1 != totalPages)
+            {
+                pages.Add(null);
+            }
+            pages.Add(totalPages);
+        }
+
+        return pages;
+    }
+}
+
+<style>
+    .govuk-pagination__link:hover {
+        background-color: #f0f0f0;
+    }
+
+    .govuk-pagination__item--current {
+        background-color: #193e72;
+        color: white;
+    }
+
+        .govuk-pagination__item--current:hover {
+            background-color: rgb(71, 101, 142);
+        }
+
+        .govuk-pagination__item--current .govuk-pagination__link:hover {
+            background-color: rgb(71, 101, 142);
+        }
+
+        .govuk-pagination__item--current .govuk-pagination__link {
+            border: none;
+            background: #193e72;
+        }
+
+    .pagination-label {
+        background: white;
+    }
+
+    .govuk-pagination__link:visited {
+        color: #193e72;
+    }
+
+    .govuk-pagination__item a:focus {
+        outline: none;
+        color: #193E72;
+        top: 0px;
+        background: rgb(254, 212, 122);
+        border-radius: 4px 4px 0px 0px;
+        box-shadow: rgb(25, 62, 114) 0px 4px 0px 0px;
+    }
+
+</style>
+
+<div class="pagination-container">
+<nav class="govuk-pagination" role="navigation" aria-label="Pagination">
+    @if (Model.HasPreviousPage)
+    {
+        <div class="govuk-pagination__prev">
+            <a class="govuk-link govuk-pagination__link" href="@PaginationService.GetPageUri(Model.CurrentPage - 1, ViewData["AnchorId"]?.ToString())" rel="prev">
+                <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                    <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                </svg>
+                <span class="govuk-pagination__link-title">
+                    Previous<span class="govuk-visually-hidden"> page</span>
+                </span>
+            </a>
+        </div>
+    }
+    <ul class="govuk-pagination__list">
+
+        @foreach (var page in PageLinksToDisplay())
+        {
+            if (page is null)
+            {
+                <li class="govuk-pagination__item govuk-pagination__item--ellipses">
+                    &ctdot;
+                </li>
+            }
+            else
+            {
+                <li class="govuk-pagination__item @(Model.CurrentPage == page ? "govuk-pagination__item--current" : string.Empty)">
+                        <a class="govuk-link govuk-pagination__link" aria-label="Page @(page.Value)" href="@PaginationService.GetPageUri(page.Value, ViewData["AnchorId"]?.ToString())" @(Model.CurrentPage == page ? "aria-current=page" : string.Empty)>@(page)</a>
+                </li>
+            }
+        }
+    </ul>
+
+    @if (Model.HasNextPage)
+    {
+        <div class="govuk-pagination__next">
+            <a class="govuk-link govuk-pagination__link" href="@PaginationService.GetPageUri(Model.CurrentPage + 1, ViewData["AnchorId"]?.ToString())" rel="next">
+                <span class="govuk-pagination__link-title">
+                    Next<span class="govuk-visually-hidden"> page</span>
+                </span>
+                <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                    <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                </svg>
+            </a>
+        </div>
+    }
+</nav>
+</div>

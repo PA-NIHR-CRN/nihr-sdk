@@ -1,0 +1,67 @@
+@using NIHR.GovUk.AspNetCore.Mvc
+@{
+    var breadcrumbs = ViewData["Breadcrumbs"] as IList<BreadcrumbItem>;
+}
+
+<style>
+    .breadcrumb-link:visited,
+    .breadcrumb-link {
+        color: #1D70B8;
+        font-feature-settings: 'clig' off, 'liga' off;
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 27px;
+        text-decoration-line: underline;
+        font-feature-settings: 'clig' off, 'liga' off;
+    }
+
+        .breadcrumb-link:focus {
+            text-decoration: none;
+            background-color: rgb(254, 212, 122);
+            box-shadow: rgb(254, 212, 122) 0px -2px, rgb(33, 43, 50) 0px 4px;
+        }
+
+    .breadcrumb-current {
+        color: #505A5F;
+        font-feature-settings: 'clig' off, 'liga' off;
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 27px;
+        text-decoration: none;
+    }
+
+    .breadcrumb-container {
+        float: left;
+        width: 100%;
+    }
+</style>
+
+@if (breadcrumbs is not null && breadcrumbs.Any())
+{
+    <div class="govuk-grid-row">
+        <nav aria-label="breadcrumb" class="govuk-breadcrumbs breadcrumb-container" style="text-align: left;">
+            <ol class="govuk-breadcrumbs__list">
+                @for (int i = 0; i < breadcrumbs.Count(); i++)
+                {
+                    var item = breadcrumbs.ElementAt(i);
+                    if (i < breadcrumbs.Count() - 1)
+                    {
+                        <li class="govuk-breadcrumbs__list-item">
+                            <a class="govuk-breadcrumbs__link breadcrumb-link" href="@item.Url">@item.Text</a>
+                        </li>
+                    }
+                    else
+                    {
+                        // TODO: The breadcrumbs should start with your ‘home’ page and end with the parent section of the current page.
+                        // see https://design-system.service.gov.uk/components/breadcrumbs/
+                        <li class="govuk-breadcrumbs__list-item">
+                            <a class="govuk-breadcrumbs__link breadcrumb-link breadcrumb-current" href="#" aria-current="page">@item.Text</a>
+                        </li>
+                    }
+                }
+            </ol>
+        </nav>
+    </div>
+}

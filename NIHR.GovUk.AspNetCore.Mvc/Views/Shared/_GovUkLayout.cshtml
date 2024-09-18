@@ -1,0 +1,72 @@
+﻿@{
+    var title = ViewData["Title"] as string;
+    var hasTitle = !string.IsNullOrWhiteSpace(title);
+}
+
+<!DOCTYPE html>
+<html lang="en" class="govuk-template app-html-class">
+
+<head>
+    <meta charset="utf-8">
+    <title>GOV.UK@(hasTitle ? $" - {title}" : string.Empty)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="blue">
+    <partial name="_HeadIcons" />
+    <link rel="stylesheet" href="~/_content/NIHR.GovUk.AspNetCore.Mvc/stylesheets/govuk-frontend-5.4.1.min.css" asp-append-version="true">
+     <style>
+        /* Remap font/asset locations prebuilt into govuk-frontend-{version}.{min}.css */
+        @('@')font-face {
+            font-family: GDS Transport;
+            font-style: normal;
+            font-weight: 400;
+            src: url(@Url.Content("~/_content/NIHR.GovUk.AspNetCore.Mvc/assets/fonts/light-94a07e06a1-v2.woff2")) format("woff2"),url(@Url.Content("~/_content/NIHR.GovUk.AspNetCore.Mvc/assets/fonts/light-f591b13f7d-v2.woff")) format("woff");
+            font-display: fallback
+        }
+
+        @('@')font-face {
+            font-family: GDS Transport;
+            font-style: normal;
+            font-weight: 700;
+            src: url(@Url.Content("~/_content/NIHR.GovUk.AspNetCore.Mvc/assets/fonts/bold-b542beb274-v2.woff2")) format("woff2"),url(@Url.Content("~/_content/NIHR.GovUk.AspNetCore.Mvc/assets/fonts/bold-affa96571d-v2.woff")) format("woff");
+            font-display: fallback
+        }
+
+
+        .govuk-footer__copyright-logo {
+            background-image: url(@Url.Content("~/_content/NIHR.GovUk.AspNetCore.Mvc/assets/images/govuk-crest.png"));
+        }
+
+        @('@')media only screen and (-webkit-min-device-pixel-ratio: 2),only screen and (min-resolution:192dpi),only screen and (min-resolution:2dppx) {
+            .govuk-footer__copyright-logo {
+                background-image: url(@Url.Content("~/_content/NIHR.GovUk.AspNetCore.Mvc/assets/images/govuk-crest-2x.png"))
+            }
+        }
+    </style>
+    <meta property="og:image" content="YOUR-DOMAIN/images/govuk-opengraph-image.png">
+</head>
+
+<body class="govuk-template__body">
+    <script>
+        document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
+    </script>
+    <partial name="_BodyStart" />
+    <partial name="_SkipLink" />
+    <partial name="_Header" />
+    <div class="govuk-width-container">
+        <partial name="_BeforeContent" />
+        <main class="govuk-main-wrapper app-main-class" id="main-content">
+            @RenderBody()
+        </main>
+    </div>
+    <partial name="_Footer" />
+    <script type="module" src="~/_content/NIHR.GovUk.AspNetCore.Mvc/javascripts/govuk-frontend-5.4.1.min.js" asp-append-version="true"></script>
+    <script type="module">
+        import {
+            initAll
+        } from '@Url.Content("~/_content/NIHR.GovUk.AspNetCore.Mvc/javascripts/govuk-frontend-5.4.1.min.js")'
+        initAll()
+    </script>
+    <partial name="_BodyEnd" />
+    @await RenderSectionAsync("Scripts", false)
+</body>
+</html>

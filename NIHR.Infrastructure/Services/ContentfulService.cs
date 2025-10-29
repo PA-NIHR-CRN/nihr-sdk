@@ -29,47 +29,56 @@ namespace NIHR.Infrastructure.Services
 
         public async Task<TContent> GetContentAsync<TContent>(string contentId, string contentType, CancellationToken cancellationToken) where TContent : new()
         {
-            var content = await GetContentByKeyAsync(contentId, contentType, cancellationToken) ?? await _contentfulClient.GetEntry<dynamic>(contentId, cancellationToken: cancellationToken);
+            var queryBuilder = QueryBuilder<TContent>.New
+                .Include(10)
+                //.LocaleIs("cy-GB")
+                .FieldEquals("sys.id", contentId);
 
-            var resultType = typeof(TContent);
-            TContent retval = new TContent();
-            var properties = resultType.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            var x = (await _contentfulClient.GetEntriesRaw(queryBuilder.Build(), cancellationToken));
 
-            var token = (JObject)content;
+            return (await _contentfulClient.GetEntries(queryBuilder, cancellationToken)).FirstOrDefault();
 
-            var serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.All };
+            //var content = /*await GetContentByKeyAsync(contentId, contentType, cancellationToken) ??*/ await _contentfulClient.GetEntry<dynamic>(contentId, cancellationToken: cancellationToken);
 
-            serializer.Converters.Add(new AssetJsonConverter());
-            serializer.Converters.Add(new ContentJsonConverter());
+            //var resultType = typeof(TContent);
+            //TContent retval = new TContent();
+            //var properties = resultType.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
 
-            foreach (var property in properties)
-            {
-                var source = token.Property(property.Name, System.StringComparison.InvariantCultureIgnoreCase);
+            //var token = (JObject)content;
 
-                // TODO: support more target property types.
-                // TODO: support more Contentful source types.
+            //var serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.All };
 
-                if (property.PropertyType == typeof(string))
-                {
-                    if (source.HasValues)
-                    {
-                        if (source.Value.GetType() == typeof(JValue))
-                        {
-                            property.SetValue(retval, source.Value.ToString());
-                        }
-                        else if (source.Value.GetType() == typeof(JObject))
-                        {
-                            if (source.Value["nodeType"].ToString() == "document")
-                            {
-                                var richTextDocument = source.Value.ToObject<Document>(serializer);
-                                property.SetValue(retval, await _htmlRenderer.ToHtml(richTextDocument));
-                            }
-                        }
-                    }
-                }
-            }
+            //serializer.Converters.Add(new AssetJsonConverter());
+            //serializer.Converters.Add(new ContentJsonConverter());
 
-            return retval;
+            //foreach (var property in properties)
+            //{
+            //    var source = token.Property(property.Name, System.StringComparison.InvariantCultureIgnoreCase);
+
+            //    // TODO: support more target property types.
+            //    // TODO: support more Contentful source types.
+
+            //    if (property.PropertyType == typeof(string))
+            //    {
+            //        if (source.HasValues)
+            //        {
+            //            if (source.Value.GetType() == typeof(JValue))
+            //            {
+            //                property.SetValue(retval, source.Value.ToString());
+            //            }
+            //            else if (source.Value.GetType() == typeof(JObject))
+            //            {
+            //                if (source.Value["nodeType"].ToString() == "document")
+            //                {
+            //                    var richTextDocument = source.Value.ToObject<Document>(serializer);
+            //                    property.SetValue(retval, await _htmlRenderer.ToHtml(richTextDocument));
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            //return retval;
         }
 
         private async Task<dynamic> GetContentByKeyAsync(string contentKey, string contentType, CancellationToken cancellationToken)

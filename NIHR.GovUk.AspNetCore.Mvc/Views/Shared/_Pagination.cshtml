@@ -139,7 +139,12 @@
             else
             {
                 <li class="govuk-pagination__item @(Model.CurrentPage == page ? "govuk-pagination__item--current" : string.Empty)">
-                        <a class="govuk-link govuk-pagination__link" aria-label="Page @(page.Value)" href="@PaginationService.GetPageUri(page.Value, ViewData["AnchorId"]?.ToString())" @(Model.CurrentPage == page ? "aria-current=page" : string.Empty)>@(page)</a>
+                    <a class="govuk-link govuk-pagination__link"
+                       aria-label="Page @(page.Value)"
+                       href="@PaginationService.GetPageUri(page.Value, ViewData["AnchorId"]?.ToString())"
+                       aria-current="@(Model.CurrentPage == page ? "page" : null)">
+                        @(page)
+                    </a>
                 </li>
             }
         }

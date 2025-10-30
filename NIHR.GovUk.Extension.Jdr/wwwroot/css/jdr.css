@@ -1,0 +1,1261 @@
+﻿:root {
+    /* Colours */
+    --Pink-1: #990066;
+    --Pink-2: #A21774;
+    --Pink-11: #F6E8F1;
+    --Purple-1: #6F5091;
+    --White: #FFF;
+    --Black: #000;
+    --gray: #5A5555;
+    --Disabled: #D1D1D1;
+    --Red: #D4351C;
+    --Yellow: #FFDD00;
+    --Border-shadow: #5A5555;
+    /* Typography */
+    --font-button-family: Lato;
+    --font-button-size: 16px;
+    --font-button-line-height: 20px;
+    --font-button-weight: 700;
+    /* Spacing / Borders */
+    --radius-default: 5px;
+    --border-thick: 2px solid var(--Pink-1);
+    color: var(--Pink-1);
+    font-size: 19px;
+}
+
+@font-face {
+    font-family: "GothamBold";
+    src: url("../fonts/Gotham-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+h1, h2, h3, h4, h5 {
+    color: var(--Black);
+    font-weight: 700;
+    font-style: normal;
+    font-family: "GothamBold";
+    margin-bottom: 1rem;
+    margin-top: 0px;
+}
+
+.transcript h1, h2, h3, h4, h5 {
+    margin-top: 20px;
+}
+
+h1 {
+    font-size: 48px;
+    line-height: 50px;
+    letter-spacing: -0.72px;
+}
+
+h2 {
+    font-size: 36px;
+    line-height: 40px;
+    letter-spacing: -0.72px;
+}
+
+h3 {
+    font-size: 27px;
+    line-height: 28px;
+    letter-spacing: -0.42px;
+    border-top: none;
+    padding-top: 0px;
+}
+
+h4 {
+    font-size: 24px;
+    line-height: 30px;
+    letter-spacing: -0.42px;
+}
+
+h5 {
+    font-size: 19px;
+    line-height: 28px;
+    letter-spacing: -0.42px;
+}
+
+@media(max-width:40.0625em) {
+    h1 {
+        font-size: 27px;
+        line-height: 30px;
+        letter-spacing: -0.72px;
+    }
+
+    h2 {
+        font-size: 24px;
+        line-height: 30px;
+        letter-spacing: -0.72px;
+    }
+
+    h3 {
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: -0.42px;
+    }
+
+    h4 {
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: -0.42px;
+    }
+
+    h5 {
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: -0.42px;
+    }
+
+
+}
+
+footer h2 {
+    color: #bd007a;
+}
+
+
+
+
+.header-container {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+.header-container > h3 {
+    font-size:21px;
+    line-height:25px
+}
+
+.govuk-cookie-banner a {
+    display: inline-flex;
+    padding: 15px;
+    align-items: flex-end;
+    text-decoration: underline !important;
+}
+
+a:hover, a:focus {
+    text-decoration: underline;
+    box-shadow: none !important;
+}
+
+p {
+    font-family: Lato;
+    font-size: 19px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
+}
+@media(max-width:40.0625em) {
+    p {
+        font-size: 16px;
+        line-height: 20px;
+    }
+}
+ul {
+    margin: revert;
+    padding: revert;
+}
+
+.inline-link {
+    display: inline !important;
+    padding: 0 !important;
+    font-size: inherit !important;
+}
+
+#heroSection {
+    background-color: var(--Pink-11);
+    background-image: url("../img/JDR_hero_left.svg"), url("../img/JDR_hero_right.svg");
+    background-repeat: no-repeat, no-repeat;
+    background-position: left top, right -333px bottom -93px;
+    background-size: 142px 495px,670px 672px;
+}
+
+@media(max-width:1150px) {
+    #heroSection {
+        background-image: none;
+    }
+
+    .intro section {
+        min-height: unset;
+        padding: 40px 10px 40px 10px;
+    }
+}
+
+.hero-content{
+    width:69%;
+}
+hero-title {
+    width: 80%;
+}
+
+div.hero-content > p {
+    margin-bottom: 40px;
+}
+
+/*591 w 495 h*/
+@media(max-width:880px){
+    .hero-content, .hero-title {
+        width: 100%;
+    }
+}
+
+    .intro section {
+        display: flex;
+        min-height:493px;
+        padding: 40px 40px 40px 0px;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+@media(max-width:626px) {
+    .intro section {
+        width: 100%;
+    }
+}
+
+.section-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 25px;
+    margin-bottom: 60px;
+}
+
+    .section-container > p {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+.media-section {
+    padding-top: 40px;
+    padding-bottom: 50px;
+}
+
+.accordion-section {
+    width: 100%;
+    background-color: var(--Pink-11);
+    padding-top: 50px;
+    padding-bottom: 100px;
+}
+
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.accordion-title {
+    font-size: 24px;
+    color: inherit;
+    border-top: none;
+    padding-block: 10px;
+    font-weight: 700;
+}
+@media(max-width:40.0625em){
+
+    .accordion-title{
+        font-size:16px;
+        line-height:20px;
+    }
+}
+
+.accordion-body {
+    background: var(--White);
+    padding: 10px 10px;
+    box-shadow: 0 -1.5px 0 0 #000 inset;
+}
+
+.accordion details {
+    background-color: var(--White);
+    border-radius: 10px;
+    
+}
+
+[id] {
+    scroll-margin-top: 25vh;
+}
+
+
+    .accordion details summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 700;
+        padding: 0px 20px;
+        background-color: var(--Pink-1);
+        color: var(--White);
+        cursor: pointer;
+        position: relative;
+        list-style: none;
+        border: 2px solid var(--Pink-1);
+        border-radius: 10px;
+    }
+
+.accordionBorder details summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 20px;
+    cursor: pointer;
+    position: relative;
+    list-style: none;
+    border: 5px solid var(--Pink-1);
+    color: var(--Pink-1);
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background-color: #eaeaea;
+ 
+}
+    .accordionBorder details summary p
+     {
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 20px;
+    }
+
+    .accordionBorder details summary p,
+    .accordionBorder details ul{
+        padding-inline:31px;
+    }
+
+        .accordionBorder details a {
+            font-size: 14px !important;
+        }
+
+    .accordionBorder details summary:hover,
+    .accordionBorder details summary:focus-visible {
+        background-color: #eaeaea;
+        box-shadow: inset 0px 0px 0px 2px var(--Pink-1) !important;
+    }
+
+
+
+        .accordionBorder details summary .chevron,
+        .accordionBorder details summary:hover .chevron,
+        .accordionBorder details summary:focus-visible .chevron,
+        .accordionBorder details summary .chevron path {
+            display: inline-grid;
+            place-items: center;
+            width: 25px;
+            height: 25px;
+            border: none;
+            border-radius: none;
+            background-color: transparent;
+            color: var(--Pink-1);
+            stroke: var(--Pink-1) !important;
+            padding: 5px;
+            padding-right:41px;
+        }
+
+.social-media{
+    padding-inline:31px;
+}
+.accordionMobile p {
+    background: transparent;
+}
+
+@media(max-width:40.0625em) {
+    .accordion-title {
+        max-width: 93%;
+    }
+}
+
+details summary::marker,
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+summary .chevron,
+button .chevron{
+    display: inline-grid;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    border: 0px solid var(--White);
+    border-radius: 50%;
+    background-color: white;
+    padding: 5px;
+}
+
+details summary:hover,
+details summary:focus-visible,
+.dropdown:hover,
+.dropdown:focus-visible {
+    background-color: var(--White);
+    outline: none;
+    color: var(--Pink-1) !important;
+    box-shadow: 0 0 0 2px var(--Pink-1), 0px 0px 0px 7px var(--Yellow) !important;
+}
+
+    details summary:hover .chevron,
+    details summary:focus-visible .chevron,
+    .dropdown:hover .chevron,
+    .dropdown:focus-visible .chevron,
+    .govuk-button:hover .chevron,
+    .govuk-button:focus .chevron {
+        background-color: var(--Black);
+        color: var(--Pink-11);
+        outline: none;
+    }
+
+details[open] summary .chevron svg,
+details[open] summary svg,
+button[aria-expanded="true"] .chevron svg,
+button[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+}
+
+details summary:focus-visible .chevron path,
+details summary:hover .chevron path,
+button:focus-visible .chevron path,
+button:hover .chevron path,
+.govuk-button:hover path,
+.govuk-button:focus path {
+
+    stroke: var(--White);
+}
+
+.chevron path {
+    stroke: var(--Pink-1);
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+details p {
+    padding: 10px 15px;
+    background-color: var(--White);
+    color: #333;
+}
+
+.govuk-grid-column-two-thirds {
+    padding: 0px !important;
+}
+
+.govuk-width-container {
+    max-width: 916px;
+}
+@media(max-width:40.0625em){
+    .govuk-width-container {
+        margin-inline:31px;
+    }
+}
+
+a, a:visited {
+    color: var(--Purple-1);
+    font-weight: normal;
+}
+
+footer a:visited {
+    color: var(--Black) !important;
+}
+
+footer a:focus,
+footer a:hover {
+    text-decoration: underline !important;
+}
+
+a,
+.govuk-skip-link {
+    font-family: Lato;
+    font-weight: 700;
+    font-size: var(--font-button-size);
+}
+
+p a, li a {
+    font-size: 19px;
+    font-weight: normal;
+}
+
+@media(max-width:40.0625em){
+    p a, li a {
+        font-size: 16px;
+    }
+}
+
+.govuk-link {
+    color: var(--Black);
+    font-family: Lato;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: auto;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    text-underline-position: from-font;
+}
+
+    .govuk-link:link {
+        color: var(--Black);
+        font-size: 19px;
+    }
+
+.govuk-skip-link:active,
+.govuk-skip-link:focus {
+    color: var(--Black);
+    display: inline-block;
+    clip: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    position: static !important;
+    white-space: normal !important;
+    width: auto !important;
+    text-decoration: underline;
+    box-shadow: none;
+}
+
+a:focus,
+a:hover {
+    color: var(--Black);
+    outline: 3px solid var(--Yellow);
+    outline-offset: 0;
+    background-color: var(--Yellow);
+    text-decoration: underline;
+}
+
+.govuk-button--tertiary,
+.govuk-button--tertiary:link,
+.govuk-button--tertiary:visited {
+    display: inline-flex;
+    padding: 8px 12px 7px 12px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--radius-default);
+    border: var(--border-thick);
+    background: var(--White);
+    box-shadow: 0 2px 0 0 var(--Pink-1);
+    color: var(--Pink-1);
+    text-align: center;
+    font-family: var(--font-button-family);
+    font-size: var(--font-button-size);
+    font-style: normal;
+    font-weight: var(--font-button-weight);
+    line-height: var(--font-button-line-height);
+    cursor: pointer;
+    min-width: 100px;
+    height: 50px;
+    border-radius: 4px;
+}
+
+
+    .govuk-button--tertiary:hover,
+    .govuk-button--tertiary:focus {
+        color: var(--Pink-1) !important;
+        background: var(--White) !important;
+        border: 2px solid !important;
+        border-color: var(--Pink-1) !important;
+        box-shadow: 0px 0px 0px 3px var(--Yellow) !important;
+    }
+
+    .govuk-button--tertiary:link {
+        text-decoration: none;
+    }
+
+.govuk-button-group {
+    display: flex;
+    gap: 20px;
+}
+
+.govuk-button,
+.govuk-button:link,
+.govuk-button:visited {
+    display: inline-flex;
+    padding: 8px 16px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--radius-default);
+    border: var(--border-thick);
+    background: var(--Pink-1);
+    box-shadow: 0 2px 0 0 var(--Black);
+    color: var(--White);
+    text-align: center;
+    font-family: var(--font-button-family);
+    font-size: var(--font-button-size);
+    font-style: normal;
+    font-weight: var(--font-button-weight);
+    line-height: var(--font-button-line-height);
+    cursor: pointer;
+    min-width: 100px;
+    height: 50px;
+    border-radius: 4px;
+    margin-right: 0px !important;
+}
+
+    .govuk-button:hover,
+    .govuk-button:focus {
+        color: var(--Pink-1) !important;
+        background: var(--White) !important;
+        border: 2px solid !important;
+        border-color: var(--Pink-1) !important;
+        box-shadow: 0px 0px 0px 3px var(--Yellow) !important;
+    }
+
+    .govuk-button:active {
+        color: var(--White);
+        background: var(--Black);
+    }
+
+.govuk-button--secondary,
+.govuk-button--secondary:link,
+.govuk-button--secondary:visited {
+    background: var(--Black);
+    color: var(--White);
+    border-color: var(--Black);
+}
+
+    .govuk-button--secondary:hover,
+    .govuk-button--secondary:focus {
+        background: var(--White) !important;
+        color: var(--Black) !important;
+        box-shadow: 0 0 0 3px var(--Yellow) !important;
+        outline: none !important;
+        border-color: var(--Black) !important;
+    }
+
+.btn-tertiary,
+.btn-tertiary:link,
+.btn-tertiary:visited {
+    background: var(--White);
+    color: var(--Pink-1);
+    border-color: var(--Pink-1);
+    box-shadow: 0 2px 0 0 var(--Pink-1);
+}
+
+    .btn-tertiary:hover,
+    .btn-tertiary:focus {
+        color: var(--Pink-1) !important;
+        background: var(--White) !important;
+        border: 2px solid !important;
+        border-color: var(--Pink-1) !important;
+        box-shadow: 0px 0px 0px 3px var(--Yellow) !important;
+    }
+
+.btn-error,
+.btn-error:link,
+.btn-error:visited {
+    background: var(--Red);
+    color: var(--White);
+    border-color: var(--Red);
+    box-shadow: 0 2px 0 0 var(--Red);
+}
+
+    .btn-error:hover,
+    .btn-error:focus {
+        color: var(--White) !important;
+        background: var(--Red) !important;
+        border: 2px solid !important;
+        border-color: var(--Red) !important;
+        box-shadow: 0px 0px 0px 3px var(--Yellow) !important;
+    }
+
+.btn-disabled,
+.btn-disabled:link,
+.btn-disabled:visited {
+    background: var(--Disabled);
+    color: var(--White);
+    border: var(--Disabled);
+    pointer-events: none;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+header .govuk-button {
+    margin-bottom: 0px;
+}
+
+.header-images {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.header-buttons {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction:row;
+}
+.header-buttons > a{
+    width:auto;
+}
+
+#nav {
+    background: var(--Pink-1);
+}
+.nav-menu-button {
+    margin: 0;
+    margin-bottom: 7px;
+}
+
+#nav summary {
+    padding: 15px 100px 15px 15px;
+}
+
+#nav .nav-dropdown summary, #nav details a {
+    text-decoration: none !important;
+}
+
+#nav details {
+    flex-direction: column;
+    justify-content: center;
+}
+
+#nav .navbar-nav {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+    #nav .navbar-nav > li {
+        display: flex;
+        height: 60px;
+        justify-content: flex-end;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+
+        #nav .navbar-nav > li > a, #nav .nav-dropdown summary {
+            color: var(--White) !important;
+            font-weight: 700;
+            font-size: 16px !important;
+            line-height: 20px;
+            vertical-align: middle;
+            text-decoration: none;
+        }
+#nav .nav > li > a:focus,
+#nav .nav > li > a:hover,
+#nav .nav > li summary:focus,
+#nav .nav > li summary:hover {
+    text-decoration: none !important;
+    color: var(--Black) !important;
+    background-color: var(--Pink-11) !important;
+    box-shadow: 0 0 0 3px var(--Yellow) !important;
+    border-radius: 4px;
+}
+#nav .sub-menu > li:focus-within,
+#nav summary:hover {
+    background-color: var(--Pink-11) !important;
+    box-shadow: 0 0 0 3px var(--Yellow) !important;
+}
+
+@media (max-width: 40.0625em) {
+    #nav .nav > li:hover,
+    #nav .nav > li:focus-within {
+        text-decoration: none !important;
+        color: var(--Black) !important;
+        background-color: var(--Pink-11) !important;
+        box-shadow: inset 0 0px 0px 3px var(--Yellow) !important;
+    }
+
+    #nav .nav > li > a:focus,
+    #nav .nav > li > a:hover,
+    #nav .nav > li summary:focus,
+    #nav .nav > li summary:hover {
+        /* override for bootstrap nav.less class*/
+        background-color: transparent !important;
+
+        box-shadow: unset !important;
+        border-radius: unset;
+    }
+
+}
+
+@media (min-width: 768px) {
+    .navbar-nav > li > a,
+    #nav .nav > li summary {
+        padding-top: 18px;
+        padding-bottom: 18px;
+    }
+}
+
+Navbar-mobile-control{
+    display:block;
+}
+@media (min-width: 40.0625em) {
+    .Navbar-mobile-control {
+        display: none
+    }
+    details[closed].Nav-mobile-details {
+        display: block;
+    }
+}
+@media(min-width:768px){
+    .navigation {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        max-width: 100%;
+    }
+}
+#navbar-button-header {
+    float: unset !important;
+    font-family: "GothamBold";
+    width: 100%;
+    text-align: left;
+    color: var(--White);
+    font-size: 16px;
+    line-height:1.5em;
+    border-radius: 0;
+    margin: 0;
+}
+#navbar-button-header:hover,
+#navbar-button-header:focus-visible{
+    color:var(--Pink-1)
+}
+
+@media(max-width:810px) {
+    #nav .navbar-collapse {
+        margin-inline: 0 !important;
+    }
+}
+@media(max-width:768px) {
+    .navbar-toggle {
+        display: inline-block !important;
+    }
+
+    .nav.navbar-nav {
+        flex-direction: column;
+    }
+
+    #nav .navbar-nav > li {
+        width: 100%;
+        justify-content: left;
+        background-color: var(--Pink-11);
+        border-bottom: solid 1px var(--gray);
+    }
+        #nav .navbar-nav > li > a {
+            width: 100%;
+            color: var(--Black) !important;
+        }
+
+    .navbar-nav {
+            margin: 0;
+        }
+}
+
+.sub-menu {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    padding: 0px;
+    background-color: var(--Pink-11);
+    gap: 4px;
+}
+
+    .sub-menu li {
+        display: flex;
+        height: 60px;
+        align-items: center;
+        padding: 10px;
+        background-color: var(--Pink-11);
+        box-shadow: 0px 0.5px var(--Border-shadow);
+    }
+
+    .sub-menu > li > a {
+        font-weight: 700;
+    }
+
+        .sub-menu > li > a:focus, .sub-menu > li > a:hover {
+            text-decoration: none !important;
+            color: var(--Black);
+            box-shadow: none;
+            background-color: var(--Pink-11) !important;
+        }
+
+.header-images .govuk-link:focus,
+.header-images .govuk-link:hover {
+    background-color: transparent;
+    box-shadow: 0 0 0 3px var(--Yellow) !important;
+}
+
+.jdr-logo-container {
+    height: auto;
+}
+
+.jdr-logo {
+    margin: 20px;
+    max-width: 140px;
+}
+
+@media(max-width:40.0625em){
+    .jdr-logo {
+        margin: 10px;
+    }
+}
+
+.nhs-logo {
+    margin: 30px;
+    max-height: 40px;
+}
+
+/*.nhs-logo media */
+/*>600px and <1000px wide: height 35px; margin: 20px;*/
+/*<600px wide: height 30px; margin: 15px;*/
+
+.center {
+    float: none;
+    justify-self: center;
+}
+
+.jdr-background-black {
+    background-color: var( --Black)
+}
+
+.row {
+    display: flex;
+}
+
+@media(max-width:957px) {
+    /* for some reason default row margin was causeing 
+        issues around tablet screen width range */
+    footer .row {
+        margin-right: 0;
+    }
+}
+
+@media(max-width:562px) {
+
+    .footerImageContainerCol {
+        flex-direction: column;
+    }
+
+    .footerImageContainerInnerCol {
+        margin-top: 25px;
+    }
+
+    .footerImageContainer {
+        margin-inline: auto;
+    }
+}
+
+.w-100 {
+    width: 100%
+}
+
+.banner {
+    background-color: var(--Pink-1);
+    color: var(--White);
+    text-align: center;
+    display: flex;
+    min-height: 201px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.banner-text-container {
+    display: flex;
+    min-height: 201px;
+    padding: 20px 0px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    max-width: 790px;
+}
+
+    .banner-text-container > p {
+        color: var(--White);
+        text-align: center;
+        font-family: "GothamBold";
+        font-size: 24px;
+        line-height: 30px;
+        letter-spacing: -0.48px;
+        margin: 0px;
+    }
+    @media(max-width:40.0625em){
+        .banner-text-container > p {
+
+            font-size: 16px;
+            line-height: 20px;
+
+        }
+    }
+
+.banner > h1,
+.banner > h2,
+.banner > h3,
+.banner > h4 {
+    color: var(--White) !important;
+}
+
+.button-wide {
+    width: fit-content;
+    flex-direction: row;
+}
+button .chevron{
+    float:right;
+}
+
+.button-width-fit-content {
+    width: fit-content;
+}
+
+.video-section iframe {
+    height: 100%;
+    width: 100%;
+}
+
+.video-wrapper {
+    height: 372px;
+    flex: 1 0 0;
+    aspect-ratio: 329/186;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.image-wrapper {
+    height: 372px;
+    flex: 1 0 0;
+    text-align:center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+    .image-wrapper > img {
+        height: 100%;
+    }
+
+@media(max-width:757px) {
+    .video-wrapper {
+        height: unset;
+    }
+    .image-wrapper {
+        height: unset;
+        width:100%;
+    }
+        .image-wrapper > img {
+            width: 100%;
+        }
+}
+
+.transcript-wrapper {
+    text-align: center;
+}
+
+.transcript {
+    text-align: left;
+    padding: 55px;
+    background-color: var(--Pink-11);
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+    .transcript p {
+        margin: 0px;
+        padding: 0px;
+        background-color: var(--Pink-11);
+    }
+
+    .transcript details p {
+        background-color: var(--Pink-11);
+    }
+
+    @media(max-width:40.0625em){
+        .transcript {
+            padding: 1px 15px;
+        }
+        .transcript ul {
+            padding-inline-start: 20px;
+        }
+    }
+
+.no-float {
+    float: none;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.cookie-btn {
+    width: fit-content;
+    padding-inline: 15px !important;
+}
+
+.govuk-cookie-banner {
+    background-color: var(--Pink-11)
+}
+
+.govuk-cookie-banner__heading {
+    color: #000;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 40px;
+    letter-spacing: -0.72px;
+}
+.govuk-cookie-banner__content {
+    padding-block: 20px !important;
+}
+
+.govuk-cookie-banner__content > .govuk-body, .transcript p, .transcript li {
+    color: #000;
+    font-family: Lato;
+    font-size: 19px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
+}
+
+.govuk-cookie-banner__content > p a{
+    font-weight:700;
+}
+
+
+@media(max-width:40.0625em) {
+    .govuk-cookie-banner__content > .govuk-body, .transcript p, .transcript li {
+        font-size: 16px;
+        line-height: 20px;
+    }
+    .cookie-btn {
+        width: 80%;
+    }
+    .govuk-cookie-banner__heading {
+        font-size: 24px;
+        line-height: 30px;
+    }
+
+    .govuk-cookie-banner__message > .govuk-button-group {
+        gap: unset;
+    }
+
+    
+}
+
+.jdr-resources-container {
+    display: flex;
+    min-height: 557px;
+    height:1px;
+    justify-self: center;
+    padding-block: 74px;
+}
+
+
+.jdr-resources {
+    width: 453px;
+}
+
+.jdr-resources-image > img {
+    height: 374px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.jdr-resources-image {
+    align-content: center;
+    min-height: 260px;
+}
+
+.jdr-resources-content {
+    align-self: center;
+    background-color: var( --Pink-11);
+}
+
+.jdr-resources-content-inner {
+    padding: 40px;
+    min-height: 336px;
+    display: flex;
+    flex-direction: column;
+    padding-block: 20px;
+    justify-content: space-between;
+}
+.jdr-resources-content-inner-text > p {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.jdr-resources-container-mobile {
+    display: block !important;
+    height: unset !important;
+}
+
+.jdr-resources-image-mobile > img {
+    height: unset !important;
+    width: 100% !important;
+}
+
+@media(max-width: 957px) {
+
+    .jdr-resources-container {
+        display: block;
+        height: unset;
+    }
+
+    .jdr-resources-image > img {
+        height: unset;
+        width: 100%;
+    }
+}
+
+@media(max-width: 40.0625em) {
+
+    .jdr-resources-container {
+        padding-block: 0;
+        height: unset;
+    }
+
+    .jdr-resources-content-inner {
+        height: unset;
+        min-height: 336px;
+        background: var(--Black);
+        color: var(--White);
+    }
+
+        .jdr-resources-content-inner > h2 {
+            color: var(--White) !important;
+        }
+
+    .jdr-resources-content-inner-text {
+        padding-block: 25px;
+    }
+
+
+        .jdr-resources-image > img {
+            height: unset;
+            width: 100%;
+        }
+
+    .jdr-resources {
+        width: 100%;
+    }
+}
+
+.on-this-page {
+    gap: 5px;
+    row-gap: 0px;
+    margin-left: 0px;
+    padding-bottom: 20px;
+}
+
+    .on-this-page > a {
+        margin-right: 0px !important;
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+        width: fit-content;
+    }
+
+@media(max-width:40.0625em) {
+    .on-this-page > a {
+        width: 100%;
+    }
+}
+
+.quick-links {
+    margin-bottom: 40px;
+}

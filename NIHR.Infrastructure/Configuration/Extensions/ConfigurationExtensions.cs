@@ -157,7 +157,7 @@ IHostEnvironment hostEnvironment)
             return Options.Options.Create(settings);
         }
 
-        public static T BindFlatConfigurationKeys<T>(this IConfiguration configuration, string sectionName) where T : class, new()
+        private static T BindFlatConfigurationKeys<T>(this IConfiguration configuration, string sectionName) where T : class, new()
         {
             var instance = new T();
             var properties = typeof(T).GetProperties();

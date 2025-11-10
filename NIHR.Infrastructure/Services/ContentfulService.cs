@@ -23,8 +23,8 @@ namespace NIHR.Infrastructure.Services
                     CancellationToken cancellationToken = default)
                     where TContent : new()
         {
-            if (string.IsNullOrWhiteSpace(contentRequest.Id))
-                throw new ArgumentException("Content ID cannot be null or empty.", nameof(contentRequest.Id));
+            if (string.IsNullOrWhiteSpace(contentRequest.ContentValue))
+                throw new ArgumentException("Content Value cannot be null or empty.", nameof(contentRequest.ContentValue));
 
             if (contentRequest.ContentTreeDepth < 1 || contentRequest.ContentTreeDepth > 10)
                 throw new ArgumentOutOfRangeException(nameof(contentRequest.ContentTreeDepth), "Content tree depth must be between 1 and 10.");
@@ -32,7 +32,7 @@ namespace NIHR.Infrastructure.Services
             var queryBuilder = QueryBuilder<TContent>.New
                 .Include(contentRequest.ContentTreeDepth)
                 .LocaleIs(contentRequest.Locale)
-                .FieldEquals(contentRequest.FieldKey, contentRequest.Id);
+                .FieldEquals(contentRequest.ContentKey, contentRequest.ContentValue);
 
             var entries = await _contentfulClient.GetEntries(queryBuilder, cancellationToken);
             return entries.FirstOrDefault();

@@ -35,7 +35,7 @@ public class WithContentTagHelper(IContentProvider contentProvider, ILogger<With
 
         var contentRequest = new ContentRequestModel
         {
-            Id = WithContent
+            ContentValue = WithContent
         };
 
         try

@@ -2,7 +2,7 @@ using System;
 
 public class ContentNotFoundException : Exception
 {
-    public ContentNotFoundException() : base($"Content Id cannot be null or empty.")
+    public ContentNotFoundException() : base($"Content value cannot be null or empty.")
     {
     }
 }

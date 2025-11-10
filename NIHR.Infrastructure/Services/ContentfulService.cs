@@ -1,15 +1,16 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Contentful.Core;
 using Contentful.Core.Search;
 using NIHR.Infrastructure.Interfaces;
+using NIHR.Infrastructure.Models;
 
 namespace NIHR.Infrastructure.Services
 {
     public class ContentfulService : IContentProvider
     {
-        const int CONTENT_TREE_SIZE_LIMIT = 10;
         private readonly IContentfulClient _contentfulClient;
 
         public ContentfulService(IContentfulClient contentfulClient)
@@ -17,41 +18,22 @@ namespace NIHR.Infrastructure.Services
             _contentfulClient = contentfulClient;
         }
 
-        public async Task<TContent> GetContentAsync<TContent>(string contentId, CancellationToken cancellationToken)
-            where TContent : new()
+        public async Task<TContent> GetContentAsync<TContent>(
+                    ContentRequestModel contentRequest,
+                    CancellationToken cancellationToken = default)
+                    where TContent : new()
         {
-            var contentType = ToCamelCase(typeof(TContent).Name);
-            return await GetContentAsync<TContent>(contentId, contentType, cancellationToken);
-        }
+            if (string.IsNullOrWhiteSpace(contentRequest.Id))
+                throw new ArgumentException("Content ID cannot be null or empty.", nameof(contentRequest.Id));
 
-        public async Task<TContent> GetContentAsync<TContent>(string contentId, string contentType, CancellationToken cancellationToken)
-            where TContent : new()
-        {
             var queryBuilder = QueryBuilder<TContent>.New
-                .Include(CONTENT_TREE_SIZE_LIMIT)
-                .FieldEquals("sys.id", contentId);
+                .Include(contentRequest.ContentTreeDepth)
+                .LocaleIs(contentRequest.Locale)
+                .FieldEquals("sys.id", contentRequest.Id);
 
             var entries = await _contentfulClient.GetEntries(queryBuilder, cancellationToken);
             return entries.FirstOrDefault();
-        }
 
-        private async Task<dynamic> GetContentByKeyAsync(string contentKey, string contentType, CancellationToken cancellationToken)
-        {
-            var queryBuilder = new QueryBuilder<dynamic>()
-                .FieldExists("fields.key")
-                .FieldEquals("fields.key", contentKey)
-                .ContentTypeIs(contentType);
-
-            var entries = await _contentfulClient.GetEntries(queryBuilder, cancellationToken);
-            return entries.SingleOrDefault();
-        }
-
-        private static string ToCamelCase(string name)
-        {
-            if (string.IsNullOrEmpty(name) || char.IsLower(name[0]))
-                return name;
-
-            return char.ToLowerInvariant(name[0]) + name.Substring(1);
         }
     }
 }

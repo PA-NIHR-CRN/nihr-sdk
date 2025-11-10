@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Contentful.Core;
@@ -26,10 +27,13 @@ namespace NIHR.Infrastructure.Services
             if (string.IsNullOrWhiteSpace(contentRequest.Id))
                 throw new ArgumentException("Content ID cannot be null or empty.", nameof(contentRequest.Id));
 
+            if (contentRequest.ContentTreeDepth < 1 || contentRequest.ContentTreeDepth > 10)
+                throw new ArgumentOutOfRangeException(nameof(contentRequest.ContentTreeDepth), "Content tree depth must be between 1 and 10.");
+
             var queryBuilder = QueryBuilder<TContent>.New
                 .Include(contentRequest.ContentTreeDepth)
                 .LocaleIs(contentRequest.Locale)
-                .FieldEquals("sys.id", contentRequest.Id);
+                .FieldEquals(contentRequest.FieldKey, contentRequest.Id);
 
             var entries = await _contentfulClient.GetEntries(queryBuilder, cancellationToken);
             return entries.FirstOrDefault();

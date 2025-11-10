@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Logging;
 using NIHR.Infrastructure.Interfaces;
+using NIHR.Infrastructure.Models;
 using System.Text.Encodings.Web;
 
 namespace NIHR.GovUk.AspNetCore.Mvc.TagHelpers;
@@ -32,9 +33,14 @@ public class WithContentTagHelper(IContentProvider contentProvider, ILogger<With
             _ => output.Content
         };
 
+        var contentRequest = new ContentRequestModel
+        {
+            Id = WithContent
+        };
+
         try
         {
-            var source = await contentProvider.GetContentAsync<RmsPage>(WithContent);
+            var source = await contentProvider.GetContentAsync<RmsPage>(contentRequest);
 
             output.AddClass("has-cms-content", HtmlEncoder.Default);
 

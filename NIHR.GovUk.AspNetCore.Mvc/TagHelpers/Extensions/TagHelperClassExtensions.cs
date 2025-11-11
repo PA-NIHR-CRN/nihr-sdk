@@ -1,71 +1,75 @@
-﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.AspNetCore.Razor.TagHelpers;
-using System.Text.Encodings.Web;
+﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace NIHR.GovUk.AspNetCore.Mvc.TagHelpers.Extensions
 {
     public static class TagHelperClassExtensions
     {
-        public static bool HasClass(this TagHelperContext context, string className)
-        {
-            return context.AllAttributes.HasClass(className);
-        }
+        private static List<string> ParseClasses(string? classValue)
+            => classValue?
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .ToList() ?? new List<string>();
 
         public static bool HasClass(this TagHelperOutput output, string className)
         {
-            return output.Attributes.HasClass(className);
-        }
-
-        public static bool HasClass(this IList<TagHelperAttribute> attributes, string className)
-        {
-            var existingClasses = attributes
-                .Where(attr => attr.Name.Equals("class", StringComparison.OrdinalIgnoreCase))
-                .SelectMany(attr => attr.Value?.ToString()?.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? Array.Empty<string>());
-
-            return existingClasses.Any(cls => cls.Equals(className, StringComparison.OrdinalIgnoreCase));
+            var classAttr = output.Attributes["class"]?.Value?.ToString();
+            return ParseClasses(classAttr).Any(c => c.Equals(className, StringComparison.OrdinalIgnoreCase));
         }
 
         public static void AppendClass(this TagHelperOutput output, string className)
         {
-            if (!output.HasClass(className))
-            {
-                output.AddClass(className, HtmlEncoder.Default);
-            }
-        }
+            if (output == null)
+                throw new ArgumentNullException(nameof(output));
 
-        public static void PrependClass(this TagHelperOutput output, string className, HtmlEncoder? htmlEncoder = null)
-        {
-            htmlEncoder ??= HtmlEncoder.Default;
-
-            if (!output.Attributes.TryGetAttribute("class", out var classAttr))
-            {
-                output.Attributes.Add("class", className);
+            if (string.IsNullOrWhiteSpace(className))
                 return;
-            }
 
-            var classList = classAttr.Value?.ToString()?
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .ToList() ?? new List<string>();
+            var classAttr = output.Attributes["class"]?.Value?.ToString();
+            var classes = ParseClasses(classAttr);
 
-            if (!classList.Contains(className, StringComparer.OrdinalIgnoreCase))
+            classes.RemoveAll(c => c.Equals(className, StringComparison.OrdinalIgnoreCase));
+
+            classes.Add(className);
+
+            output.Attributes.SetAttribute("class", string.Join(" ", classes));
+        }
+
+        public static void PrependClass(this TagHelperOutput output, string className)
+        {
+            if (output == null)
+                throw new ArgumentNullException(nameof(output));
+
+            if (string.IsNullOrWhiteSpace(className))
+                return;
+
+            var classAttr = output.Attributes["class"]?.Value?.ToString();
+            var classes = ParseClasses(classAttr);
+
+            classes.RemoveAll(c => c.Equals(className, StringComparison.OrdinalIgnoreCase));
+
+            classes.Insert(0, className);
+
+            output.Attributes.SetAttribute("class", string.Join(" ", classes));
+        }
+
+        public static void AddClass(this TagHelperOutput output, string className)
+        {
+            var classAttr = output.Attributes["class"]?.Value?.ToString();
+            var classes = ParseClasses(classAttr);
+
+            if (!classes.Contains(className, StringComparer.OrdinalIgnoreCase))
             {
-                classList.Insert(0, className);
-                output.Attributes.SetAttribute("class", string.Join(" ", classList));
+                classes.Add(className);
+                output.Attributes.SetAttribute("class", string.Join(" ", classes));
             }
         }
 
-        public static void RemoveClass(this TagHelperOutput output, string className, HtmlEncoder? htmlEncoder = null)
+        public static void RemoveClass(this TagHelperOutput output, string className)
         {
-            htmlEncoder ??= HtmlEncoder.Default;
+            var classAttr = output.Attributes["class"]?.Value?.ToString();
+            var classes = ParseClasses(classAttr);
 
-            if (!output.Attributes.TryGetAttribute("class", out var classAttr)) return;
-
-            var classList = classAttr.Value?.ToString()?
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .ToList() ?? new List<string>();
-
-            classList.RemoveAll(c => c.Equals(className, StringComparison.OrdinalIgnoreCase));
-            output.Attributes.SetAttribute("class", string.Join(" ", classList));
+            classes.RemoveAll(c => c.Equals(className, StringComparison.OrdinalIgnoreCase));
+            output.Attributes.SetAttribute("class", string.Join(" ", classes));
         }
     }
 }

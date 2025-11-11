@@ -1,17 +1,51 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
-using NIHR.GovUk.AspNetCore.Mvc.TagHelpers.Extensions;
 
-namespace NIHR.GovUk.AspNetCore.Mvc.TagHelpers
+namespace NIHR.GovUk.Extension.Jdr.TagHelpers
 {
-    [HtmlTargetElement("a", Attributes = "class")]
+    [HtmlTargetElement("skip-link")]
     public class SkipLinkTagHelper : TagHelper
     {
+        private const string DefaultHref = "#main-content";
+        private const string DefaultText = "Skip to main content";
+        private const string GovUkClass = "govuk-skip-link";
+
+        public string Href { get; set; } = DefaultHref;
+
+        public string Text { get; set; } = DefaultText;
+
+        public string? Class { get; set; }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            if (output.HasClass("skip-link"))
+            output.TagName = "a";
+            output.TagMode = TagMode.StartTagAndEndTag;
+
+            var existingClasses = new HashSet<string>(
+                (output.Attributes["class"]?.Value?.ToString() ?? "")
+                    .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries),
+                StringComparer.OrdinalIgnoreCase
+            );
+
+            if (!existingClasses.Contains(GovUkClass))
+                existingClasses.Add(GovUkClass);
+
+            if (!string.IsNullOrWhiteSpace(Class))
             {
-                output.RemoveClass("skip-link");
-                output.PrependClass("govuk-skip-link");
+                foreach (var extra in Class.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                    existingClasses.Add(extra);
+            }
+
+            var classString = string.Join(" ", existingClasses);
+            output.Attributes.SetAttribute("class", classString);
+
+            if (!output.Attributes.ContainsName("href"))
+            {
+                output.Attributes.SetAttribute("href", string.IsNullOrWhiteSpace(Href) ? DefaultHref : Href);
+            }
+
+            if (!output.Content.IsModified)
+            {
+                output.Content.SetContent(string.IsNullOrWhiteSpace(Text) ? DefaultText : Text);
             }
         }
     }

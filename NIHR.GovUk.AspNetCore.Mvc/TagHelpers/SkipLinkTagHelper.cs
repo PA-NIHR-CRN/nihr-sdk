@@ -8,6 +8,7 @@ namespace NIHR.GovUk.Extension.Jdr.TagHelpers
         private const string DefaultHref = "#main-content";
         private const string DefaultText = "Skip to main content";
         private const string GovUkClass = "govuk-skip-link";
+        private const string GovUkDataModule = "govuk-skip-link";
 
         public string Href { get; set; } = DefaultHref;
 
@@ -41,6 +42,11 @@ namespace NIHR.GovUk.Extension.Jdr.TagHelpers
             if (!output.Attributes.ContainsName("href"))
             {
                 output.Attributes.SetAttribute("href", string.IsNullOrWhiteSpace(Href) ? DefaultHref : Href);
+            }
+
+            if (!output.Attributes.ContainsName("data-module"))
+            {
+                output.Attributes.SetAttribute("data-module", GovUkDataModule);
             }
 
             if (!output.Content.IsModified)

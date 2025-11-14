@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddContentManagement(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddContentful(configuration);
-            services.AddScoped<IContentProvider, ContentfulService>();
+            services.AddScoped<IContentProvider, ContentfulProvider>();
 
             services.AddTransient((c) =>
             {

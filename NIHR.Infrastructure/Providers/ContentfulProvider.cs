@@ -9,11 +9,11 @@ using NIHR.Infrastructure.Models;
 
 namespace NIHR.Infrastructure.Services
 {
-    public class ContentfulService : IContentProvider
+    public class ContentfulProvider : IContentProvider
     {
         private readonly IContentfulClient _contentfulClient;
 
-        public ContentfulService(IContentfulClient contentfulClient)
+        public ContentfulProvider(IContentfulClient contentfulClient)
         {
             _contentfulClient = contentfulClient;
         }

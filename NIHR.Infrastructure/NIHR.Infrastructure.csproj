@@ -28,6 +28,10 @@
 
 	<ItemGroup>
 		<Folder Include="Extensions\" />
+		<Folder Include="Providers\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Remove="Providers\" />
+	</ItemGroup>
 </Project>

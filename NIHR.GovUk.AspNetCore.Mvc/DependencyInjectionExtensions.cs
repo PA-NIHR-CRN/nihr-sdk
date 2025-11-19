@@ -5,6 +5,8 @@ using NIHR.GovUk.AspNetCore.Mvc;
 using NIHR.GovUk.AspNetCore.Mvc.ContentManagement;
 using NIHR.Infrastructure.Interfaces;
 using NIHR.Infrastructure.Services;
+using NIHR.Infrastructure.Providers;
+
 
 namespace Microsoft.Extensions.DependencyInjection
 {

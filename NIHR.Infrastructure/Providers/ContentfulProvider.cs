@@ -7,7 +7,7 @@ using Contentful.Core.Search;
 using NIHR.Infrastructure.Interfaces;
 using NIHR.Infrastructure.Models;
 
-namespace NIHR.Infrastructure.Services
+namespace NIHR.Infrastructure.Providers
 {
     public class ContentfulProvider : IContentProvider
     {

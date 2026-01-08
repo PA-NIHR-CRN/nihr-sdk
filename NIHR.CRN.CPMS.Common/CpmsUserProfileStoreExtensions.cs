@@ -1,77 +1,80 @@
-﻿using NIHR.CRN.CPMS.Abstractions;
+﻿using System;
+using System.Threading.Tasks;
+using NIHR.CRN.CPMS.Abstractions;
 
-namespace NIHR.CRN.CPMS.Common;
-
-public static class CpmsUserProfileStoreExtensions
+namespace NIHR.CRN.CPMS.Common
 {
-    public static async Task<TUserProfile> SynchronizeUserProfileAsync<TUserProfile, TRefPerson, TUserClaimMembership>(
-        this ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> userStore, string? uuid,
-        string email, ExtendedUserAttributes? extendedUserAttributes = null)
-        where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership>,  new()
-        where TRefPerson : class, IRefPerson, new()
-        where TUserClaimMembership : class, IUserClaimMembership, new()
+    public static class CpmsUserProfileStoreExtensions
     {
-        if (string.IsNullOrWhiteSpace(email))
+        public static async Task<TUserProfile> SynchronizeUserProfileAsync<TUserProfile, TRefPerson, TUserClaimMembership>(
+            this ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> userStore, string? uuid,
+            string email, ExtendedUserAttributes? extendedUserAttributes = null)
+            where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership>,  new()
+            where TRefPerson : class, IRefPerson, new()
+            where TUserClaimMembership : class, IUserClaimMembership, new()
         {
-            throw new ArgumentException(nameof(email));
-        }
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentException(nameof(email));
+            }
 
-        var userProfile = string.IsNullOrWhiteSpace(uuid) ? null
-            : await userStore.GetUserProfileByUuidAsync(uuid);
-
-        if (userProfile == null)
-        {
-            userProfile = await userStore.GetUserProfileByEmailAsync(email);
+            var userProfile = string.IsNullOrWhiteSpace(uuid) ? null
+                : await userStore.GetUserProfileByUuidAsync(uuid);
 
             if (userProfile == null)
             {
-                userProfile = new TUserProfile
+                userProfile = await userStore.GetUserProfileByEmailAsync(email);
+
+                if (userProfile == null)
                 {
-                    EmailId = email,
-                    LastLogin = DateTime.Now,
-                    UserId = uuid
-                };
-                userStore.AddUserProfile(userProfile);
+                    userProfile = new TUserProfile
+                    {
+                        EmailId = email,
+                        LastLogin = DateTime.Now,
+                        UserId = uuid
+                    };
+                    userStore.AddUserProfile(userProfile);
+                }
+                else if (!string.IsNullOrWhiteSpace(uuid))
+                {
+                    userProfile.UserId = uuid;
+                }
             }
-            else if (!string.IsNullOrWhiteSpace(uuid))
+            else
             {
-                userProfile.UserId = uuid;
+                userProfile.EmailId = email;
             }
-        }
-        else
-        {
-            userProfile.EmailId = email;
-        }
 
-        // If the user has no claims then add PublicUser
-        if (userProfile.UserClaimMembership.Count == 0)
-        {
-            userProfile.UserClaimMembership.Add(new()
+            // If the user has no claims then add PublicUser
+            if (userProfile.UserClaimMembership.Count == 0)
             {
-                ClaimTypeId = (long)ClaimTypes.PublicUser
-            });
+                userProfile.UserClaimMembership.Add(new TUserClaimMembership
+                {
+                    ClaimTypeId = (long)ClaimTypes.PublicUser
+                });
+            }
+
+
+            if (userProfile.Person == null)
+            {
+                var person = await userStore.GetRefPersonByEmailAsync(userProfile.EmailId);
+                userProfile.Person = person ?? new TRefPerson();
+            }
+
+            userProfile.Person.Email = email;
+
+            if (extendedUserAttributes != null)
+            {
+                userProfile.Person.FirstName = extendedUserAttributes.FirstName ?? string.Empty;
+                userProfile.Person.LastName = extendedUserAttributes.LastName ?? string.Empty;
+                userProfile.Person.OrcId = extendedUserAttributes.OrcId ?? string.Empty;
+            }
+
+            userProfile.LastLogin = DateTime.Now;
+
+            await userStore.SaveChangesAsync();
+
+            return userProfile;
         }
-
-
-        if (userProfile.Person == null)
-        {
-            var person = await userStore.GetRefPersonByEmailAsync(userProfile.EmailId);
-            userProfile.Person = person ?? new();
-        }
-
-        userProfile.Person.Email = email;
-
-        if (extendedUserAttributes != null)
-        {
-            userProfile.Person.FirstName = extendedUserAttributes.FirstName ?? string.Empty;
-            userProfile.Person.LastName = extendedUserAttributes.LastName ?? string.Empty;
-            userProfile.Person.OrcId = extendedUserAttributes.OrcId ?? string.Empty;
-        }
-
-        userProfile.LastLogin = DateTime.Now;
-
-        await userStore.SaveChangesAsync();
-
-        return userProfile;
     }
 }

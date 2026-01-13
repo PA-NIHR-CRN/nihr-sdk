@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NIHR.CRN.CPMS.Abstractions;
 
 namespace NIHR.CRN.CPMS.Common
@@ -11,7 +12,15 @@ namespace NIHR.CRN.CPMS.Common
             where TRefPerson : class, IRefPerson, new()
             where TUserClaimMembership : class, IUserClaimMembership, new()
         {
-            return services.AddTransient<ICpmsAuthenticator<TUserProfile>, CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>();
+            return services
+                .AddTransient<ICpmsAuthenticator<TUserProfile>,
+                    CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>();
+        }
+
+        public static void AddAuthBypassSettings(this IHostApplicationBuilder builder,
+            string sectionName = "AuthenticationBypass")
+        {
+            builder.Services.Configure<AuthenticationBypassSettings>(builder.Configuration.GetSection(sectionName));
         }
     }
 }

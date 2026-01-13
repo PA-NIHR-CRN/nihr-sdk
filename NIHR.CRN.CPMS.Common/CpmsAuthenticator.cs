@@ -4,7 +4,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NIHR.CRN.CPMS.Abstractions;
-using NIHR.Infrastructure.Settings;
 
 namespace NIHR.CRN.CPMS.Common
 {

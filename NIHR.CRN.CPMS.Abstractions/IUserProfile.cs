@@ -10,5 +10,5 @@ public interface IUserProfile<TRefPerson, TUserClaimMembership>
     
     TRefPerson Person { get; set; }
     
-    ICollection<TUserClaimMembership> UserClaimMembership { get; set; }
+    ICollection<TUserClaimMembership> UserClaimMembership { get; }
 }

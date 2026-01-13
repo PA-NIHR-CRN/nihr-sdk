@@ -8,13 +8,14 @@ using NIHR.Infrastructure.Settings;
 
 namespace NIHR.CRN.CPMS.Common
 {
-    public partial class CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership> : ICpmsAuthenticator<TUserProfile>
+    public partial class
+        CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership> : ICpmsAuthenticator<TUserProfile>
         where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership>, new()
         where TRefPerson : class, IRefPerson, new()
         where TUserClaimMembership : class, IUserClaimMembership, new()
     {
         private readonly TimeSpan _cacheTtl = TimeSpan.FromMinutes(1);
-        
+
         private readonly ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> _userStore;
         private readonly IOptions<AuthenticationBypassSettings> _bypassSettings;
         private readonly IMemoryCache _memoryCache;
@@ -43,7 +44,7 @@ namespace NIHR.CRN.CPMS.Common
         [LoggerMessage(EventId = 10003, Level = LogLevel.Error,
             Message = "The email must be set for all requests")]
         public partial void LogEmailHeaderNotSet();
-        
+
         [LoggerMessage(EventId = 10004, Level = LogLevel.Error,
             Message = "The UUID must be set for all requests")]
         public partial void LogUuidHeaderNotSet();
@@ -66,8 +67,7 @@ namespace NIHR.CRN.CPMS.Common
                     return AuthResult<TUserProfile>.Fail("Bypass email not set");
                 }
 
-                userProfile = await GetOrCreateUserProfile(_bypassSettings.Value.BypassEmail, null);
-                await _userStore.SaveChangesAsync();
+                userProfile = await GetOrCreateUserProfile(_bypassSettings.Value.BypassEmail);
             }
             else
             {
@@ -84,24 +84,51 @@ namespace NIHR.CRN.CPMS.Common
                 }
 
                 var cacheKey = new CacheKey(uuid);
-                
-                // TODO: This is fairly naive, the LastLogin timestamp and the other mutable columns 
-                // TODO: (email, firstName, lastName and Orcid) only get updated upon a cache miss
-                // TODO: This might be acceptable if the cache ttl remains at 60 seconds, but we
-                // TODO: could be a bit cleverer and write back changes, using the cache to save a DB read.
+
+                void UpdatePersonalDetails(TRefPerson person)
+                {
+                    person.FirstName = firstName ?? string.Empty;
+                    person.LastName = lastName ?? string.Empty;
+                    person.OrcId = orcId ?? string.Empty;
+                }
+
+                // LastLogin timestamp is intentionally set only on a cache miss or on a profile change. The
+                // cache ttl is 60 seconds, so the timestamp will still be updated frequently.
+                if (_memoryCache.TryGetValue(cacheKey, out TUserProfile? cachedProfile))
+                {
+                    if (ProfileHasChanged(cachedProfile!.Person, email, firstName, lastName, orcId))
+                    {
+                        userProfile = await GetOrCreateUserProfile(email, uuid, UpdatePersonalDetails);
+                        _memoryCache.Set(cacheKey, userProfile);
+                    }
+                    else
+                    {
+                        userProfile = cachedProfile;
+                    }
+                }
+                else
+                {
+                    userProfile = await GetOrCreateUserProfile(email, uuid, UpdatePersonalDetails);
+                    _memoryCache.Set(cacheKey, userProfile);
+                }
+
                 userProfile = (await _memoryCache.GetOrCreateAsync(cacheKey, async cacheEntry =>
                 {
                     cacheEntry.AbsoluteExpirationRelativeToNow = _cacheTtl;
-                    userProfile = await GetOrCreateUserProfile(email, uuid);
-                    userProfile.Person.FirstName = firstName ?? string.Empty;
-                    userProfile.Person.LastName = lastName ?? string.Empty;
-                    userProfile.Person.OrcId = orcId ?? string.Empty;
-                    await _userStore.SaveChangesAsync();
                     return userProfile;
                 }))!;
             }
 
             return AuthResult<TUserProfile>.Success(userProfile);
+        }
+
+        private bool ProfileHasChanged(TRefPerson person, string email, string? firstName, string? lastName,
+            string? orcId)
+        {
+            return person.Email != email
+                   || person.FirstName != firstName
+                   || person.LastName != lastName
+                   || person.OrcId != orcId;
         }
 
         private record CacheKey
@@ -114,7 +141,8 @@ namespace NIHR.CRN.CPMS.Common
             public string? Uuid { get; }
         }
 
-        private async Task<TUserProfile> GetOrCreateUserProfile(string email, string? uuid)
+        private async Task<TUserProfile> GetOrCreateUserProfile(string email, string? uuid = null,
+            Action<TRefPerson>? updatePersonalDetails = null)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
@@ -164,6 +192,7 @@ namespace NIHR.CRN.CPMS.Common
                 userProfile.Person = person ?? new TRefPerson();
             }
 
+            updatePersonalDetails?.Invoke(userProfile.Person);
             userProfile.Person.Email = email;
             userProfile.LastLogin = DateTime.Now;
 

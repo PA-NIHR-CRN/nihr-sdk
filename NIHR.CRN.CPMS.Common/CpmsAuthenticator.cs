@@ -18,14 +18,14 @@ namespace NIHR.CRN.CPMS.Common
 
         private readonly ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> _userStore;
         private readonly IOptions<AuthenticationBypassSettings> _bypassSettings;
-        private readonly IMemoryCache? _memoryCache;
+        private readonly IMemoryCache _memoryCache;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>? _logger;
 
         public CpmsAuthenticator(
             ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> userStore,
             IOptions<AuthenticationBypassSettings> bypassSettings,
-            IMemoryCache? memoryCache,
+            IMemoryCache memoryCache,
             ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>? logger,
             IHostEnvironment hostEnvironment)
         {
@@ -88,7 +88,7 @@ namespace NIHR.CRN.CPMS.Common
                     return Result<TUserProfile>.Fail("UUID not set");
                 }
 
-                var cacheKey = new CacheKey(uuid);
+                var cacheKey = new CacheKey(uuid!);
 
                 void UpdatePersonalDetails(TRefPerson person)
                 {
@@ -99,12 +99,12 @@ namespace NIHR.CRN.CPMS.Common
 
                 // LastLogin timestamp is intentionally set only on a cache miss or on a profile change. The
                 // cache ttl is 60 seconds, so the timestamp will still be updated frequently.
-                if (_memoryCache != null && _memoryCache.TryGetValue(cacheKey, out TUserProfile? cachedProfile))
+                if (_memoryCache.TryGetValue(cacheKey, out TUserProfile? cachedProfile))
                 {
-                    if (ProfileHasChanged(cachedProfile!.Person, email, firstName, lastName, orcId))
+                    if (ProfileHasChanged(cachedProfile!.Person, email!, firstName, lastName, orcId))
                     {
                         // If the personal details have changed, immediately update the record and cache...
-                        userProfile = await UpdateOrCreateUserProfile(email, uuid, UpdatePersonalDetails);
+                        userProfile = await UpdateOrCreateUserProfile(email!, uuid, UpdatePersonalDetails);
                         _memoryCache.Set(cacheKey, userProfile, _cacheTtl);
                     }
                     else
@@ -114,8 +114,8 @@ namespace NIHR.CRN.CPMS.Common
                 }
                 else
                 {
-                    userProfile = await UpdateOrCreateUserProfile(email, uuid, UpdatePersonalDetails);
-                    _memoryCache?.Set(cacheKey, userProfile);
+                    userProfile = await UpdateOrCreateUserProfile(email!, uuid, UpdatePersonalDetails);
+                    _memoryCache.Set(cacheKey, userProfile);
                 }
             }
 
@@ -151,7 +151,7 @@ namespace NIHR.CRN.CPMS.Common
 
             var userProfile = string.IsNullOrWhiteSpace(uuid)
                 ? null
-                : await _userStore.GetUserProfileByUuidAsync(uuid);
+                : await _userStore.GetUserProfileByUuidAsync(uuid!);
 
             if (userProfile == null)
             {

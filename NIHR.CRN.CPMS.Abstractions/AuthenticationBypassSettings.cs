@@ -1,6 +1,6 @@
 ﻿namespace NIHR.CRN.CPMS.Abstractions
 {
-    public abstract class AuthenticationBypassSettings
+    public class AuthenticationBypassSettings
     {
         public bool Bypass { get; set; }
 

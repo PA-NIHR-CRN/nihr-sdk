@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NIHR.CRN.CPMS.Abstractions;
@@ -17,40 +18,45 @@ namespace NIHR.CRN.CPMS.Common
 
         private readonly ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> _userStore;
         private readonly IOptions<AuthenticationBypassSettings> _bypassSettings;
-        private readonly IMemoryCache _memoryCache;
-        private readonly ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>> _logger;
+        private readonly IMemoryCache? _memoryCache;
+        private readonly IHostEnvironment _hostEnvironment;
+        private readonly ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>? _logger;
 
         public CpmsAuthenticator(
             ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> userStore,
             IOptions<AuthenticationBypassSettings> bypassSettings,
-            IMemoryCache memoryCache,
-            ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>> logger)
+            IMemoryCache? memoryCache,
+            ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>? logger,
+            IHostEnvironment hostEnvironment)
         {
             _userStore = userStore;
             _bypassSettings = bypassSettings;
             _memoryCache = memoryCache;
+            _hostEnvironment = hostEnvironment;
             _logger = logger;
         }
 
         [LoggerMessage(EventId = 10001, Level = LogLevel.Warning,
             Message = "Authentication bypass can only be enabled in a development environment")]
-        public partial void LogAttemptToBypassOutsideOfDev();
+        private partial void LogAttemptToBypassOutsideOfDev();
 
         [LoggerMessage(EventId = 10002, Level = LogLevel.Error,
             Message = "BypassEmail must be set when authentication bypass is enabled")]
-        public partial void LogBypassEmailNotSet();
+        private partial void LogBypassEmailNotSet();
 
         [LoggerMessage(EventId = 10003, Level = LogLevel.Error,
             Message = "The email must be set for all requests")]
-        public partial void LogEmailHeaderNotSet();
+        private partial void LogEmailHeaderNotSet();
 
         [LoggerMessage(EventId = 10004, Level = LogLevel.Error,
             Message = "The UUID must be set for all requests")]
-        public partial void LogUuidHeaderNotSet();
+        private partial void LogUuidHeaderNotSet();
 
-        public async Task<AuthResult<TUserProfile>> SynchronizeUserProfileAsync(bool isDevelopmentEnvironment,
-            string? email, string? uuid, string? firstName, string? lastName, string? orcId)
+        public async Task<Result<TUserProfile>> SynchronizeUserProfileAsync(string? email, string? uuid, 
+            string? firstName, string? lastName, string? orcId)
         {
+            var isDevelopmentEnvironment = _hostEnvironment.IsDevelopment();
+            
             if (_bypassSettings.Value.Bypass && !isDevelopmentEnvironment)
             {
                 LogAttemptToBypassOutsideOfDev();
@@ -63,23 +69,23 @@ namespace NIHR.CRN.CPMS.Common
                 if (string.IsNullOrWhiteSpace(_bypassSettings.Value.BypassEmail))
                 {
                     LogBypassEmailNotSet();
-                    return AuthResult<TUserProfile>.Fail("Bypass email not set");
+                    return Result<TUserProfile>.Fail("Bypass email not set");
                 }
 
-                userProfile = await GetOrCreateUserProfile(_bypassSettings.Value.BypassEmail);
+                userProfile = await UpdateOrCreateUserProfile(_bypassSettings.Value.BypassEmail);
             }
             else
             {
                 if (string.IsNullOrWhiteSpace(email))
                 {
                     LogEmailHeaderNotSet();
-                    return AuthResult<TUserProfile>.Fail("Email address not set");
+                    return Result<TUserProfile>.Fail("Email address not set");
                 }
 
                 if (string.IsNullOrWhiteSpace(uuid))
                 {
                     LogUuidHeaderNotSet();
-                    return AuthResult<TUserProfile>.Fail("UUID not set");
+                    return Result<TUserProfile>.Fail("UUID not set");
                 }
 
                 var cacheKey = new CacheKey(uuid);
@@ -93,12 +99,13 @@ namespace NIHR.CRN.CPMS.Common
 
                 // LastLogin timestamp is intentionally set only on a cache miss or on a profile change. The
                 // cache ttl is 60 seconds, so the timestamp will still be updated frequently.
-                if (_memoryCache.TryGetValue(cacheKey, out TUserProfile? cachedProfile))
+                if (_memoryCache != null && _memoryCache.TryGetValue(cacheKey, out TUserProfile? cachedProfile))
                 {
                     if (ProfileHasChanged(cachedProfile!.Person, email, firstName, lastName, orcId))
                     {
-                        userProfile = await GetOrCreateUserProfile(email, uuid, UpdatePersonalDetails);
-                        _memoryCache.Set(cacheKey, userProfile);
+                        // If the personal details have changed, immediately update the record and cache...
+                        userProfile = await UpdateOrCreateUserProfile(email, uuid, UpdatePersonalDetails);
+                        _memoryCache.Set(cacheKey, userProfile, _cacheTtl);
                     }
                     else
                     {
@@ -107,18 +114,12 @@ namespace NIHR.CRN.CPMS.Common
                 }
                 else
                 {
-                    userProfile = await GetOrCreateUserProfile(email, uuid, UpdatePersonalDetails);
-                    _memoryCache.Set(cacheKey, userProfile);
+                    userProfile = await UpdateOrCreateUserProfile(email, uuid, UpdatePersonalDetails);
+                    _memoryCache?.Set(cacheKey, userProfile);
                 }
-
-                userProfile = (await _memoryCache.GetOrCreateAsync(cacheKey, async cacheEntry =>
-                {
-                    cacheEntry.AbsoluteExpirationRelativeToNow = _cacheTtl;
-                    return userProfile;
-                }))!;
             }
 
-            return AuthResult<TUserProfile>.Success(userProfile);
+            return Result<TUserProfile>.Success(userProfile);
         }
 
         private bool ProfileHasChanged(TRefPerson person, string email, string? firstName, string? lastName,
@@ -140,7 +141,7 @@ namespace NIHR.CRN.CPMS.Common
             public string? Uuid { get; }
         }
 
-        private async Task<TUserProfile> GetOrCreateUserProfile(string email, string? uuid = null,
+        private async Task<TUserProfile> UpdateOrCreateUserProfile(string email, string? uuid = null,
             Action<TRefPerson>? updatePersonalDetails = null)
         {
             if (string.IsNullOrWhiteSpace(email))
@@ -158,11 +159,13 @@ namespace NIHR.CRN.CPMS.Common
 
                 if (userProfile == null)
                 {
+                    var person = await _userStore.GetRefPersonByEmailAsync(email);
                     userProfile = new TUserProfile
                     {
                         EmailId = email,
                         LastLogin = DateTime.Now,
-                        UserId = uuid
+                        UserId = uuid,
+                        Person = person ?? new TRefPerson()
                     };
                     _userStore.AddUserProfile(userProfile);
                 }
@@ -184,13 +187,7 @@ namespace NIHR.CRN.CPMS.Common
                     ClaimTypeId = (long)ClaimTypes.PublicUser
                 });
             }
-
-            if (userProfile.Person == null)
-            {
-                var person = await _userStore.GetRefPersonByEmailAsync(userProfile.EmailId);
-                userProfile.Person = person ?? new TRefPerson();
-            }
-
+            
             updatePersonalDetails?.Invoke(userProfile.Person);
             userProfile.Person.Email = email;
             userProfile.LastLogin = DateTime.Now;

@@ -9,49 +9,6 @@ using NIHR.CRN.CPMS.Common.Tests.Database;
 
 namespace NIHR.CRN.CPMS.Common.Tests;
 
-public abstract class AuthTestBase (AuthenticationBypassSettings bypassSettings, string envName)
-{
-    protected TestDbContext Context { get; private set; }
-    private TestUserStore _userStore;
-    private MemoryCache _memoryCache;
-    protected CpmsAuthenticator<UserProfile, RefPerson, UserClaimMembership> Authenticator { get; private set; }
-    private SqliteConnection _connection;
-
-    [TearDown]
-    public void TearDown()
-    {
-        Context.Dispose();
-        _memoryCache.Dispose();
-        _connection.Dispose();
-    }
-    
-    [SetUp]
-    public void Setup()
-    {
-        _connection = new SqliteConnection("Filename=:memory:");
-        _connection.Open();
-        
-        var contextOptions = new DbContextOptionsBuilder<TestDbContext>()
-            .UseSqlite(_connection)
-            .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-            .Options;
-        
-        Context = new TestDbContext(contextOptions);
-        
-        Context.Database.EnsureDeleted();
-        Context.Database.EnsureCreated();
-        
-        _userStore = new TestUserStore(Context);
-        _memoryCache = new MemoryCache(new MemoryCacheOptions());
-        
-        Authenticator =
-            new CpmsAuthenticator<UserProfile, RefPerson, UserClaimMembership>(
-                _userStore,
-                Options.Create(bypassSettings), _memoryCache, null,
-                new TestHostEnvironment(envName, "CPMS", string.Empty, null));
-    }
-}
-
 public class AuthenticatorFixture : IDisposable
 {
     public const string EnvDevelopment = "Development";

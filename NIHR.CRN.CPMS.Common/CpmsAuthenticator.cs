@@ -17,14 +17,14 @@ namespace NIHR.CRN.CPMS.Common
         private readonly TimeSpan _cacheTtl = TimeSpan.FromMinutes(1);
 
         private readonly ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> _userStore;
-        private readonly IOptions<AuthenticationBypassSettings> _bypassSettings;
+        private readonly IOptions<AuthenticationBypassSettings>? _bypassSettings;
         private readonly IMemoryCache _memoryCache;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>? _logger;
 
         public CpmsAuthenticator(
             ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> userStore,
-            IOptions<AuthenticationBypassSettings> bypassSettings,
+            IOptions<AuthenticationBypassSettings>? bypassSettings,
             IMemoryCache memoryCache,
             ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>? logger,
             IHostEnvironment hostEnvironment)
@@ -57,14 +57,14 @@ namespace NIHR.CRN.CPMS.Common
         {
             var isDevelopmentEnvironment = _hostEnvironment.IsDevelopment();
             
-            if (_bypassSettings.Value.Bypass && !isDevelopmentEnvironment)
+            if (_bypassSettings?.Value.Bypass == true && !isDevelopmentEnvironment)
             {
                 LogAttemptToBypassOutsideOfDev();
             }
 
             TUserProfile userProfile;
 
-            if (isDevelopmentEnvironment && _bypassSettings.Value.Bypass)
+            if (isDevelopmentEnvironment && _bypassSettings?.Value.Bypass == true)
             {
                 if (string.IsNullOrWhiteSpace(_bypassSettings.Value.BypassEmail))
                 {

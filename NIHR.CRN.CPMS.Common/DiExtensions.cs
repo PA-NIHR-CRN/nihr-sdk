@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NIHR.CRN.CPMS.Abstractions;
 
@@ -17,10 +18,10 @@ namespace NIHR.CRN.CPMS.Common
                     CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>();
         }
 
-        public static void AddAuthBypassSettings(this IHostApplicationBuilder builder,
+        public static void AddAuthBypassSettings(this IServiceCollection services, IConfiguration configuration,
             string sectionName = "AuthenticationBypass")
         {
-            builder.Services.Configure<AuthenticationBypassSettings>(builder.Configuration.GetSection(sectionName));
+            services.Configure<AuthenticationBypassSettings>(configuration.GetSection(sectionName));
         }
     }
 }

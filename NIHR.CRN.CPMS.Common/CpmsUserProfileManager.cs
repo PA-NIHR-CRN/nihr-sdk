@@ -52,7 +52,7 @@ namespace NIHR.CRN.CPMS.Common
             Message = "The UUID must be set for all requests")]
         private partial void LogUuidHeaderNotSet();
 
-        public async Task<Result<TUserProfile>> FetchAndUpdateUserProfileAsync(string? email, string? uuid, 
+        public async Task<TUserProfile> FetchAndUpdateUserProfileAsync(string? email, string? uuid, 
             string? firstName, string? lastName, string? orcId)
         {
             var isDevelopmentEnvironment = _hostEnvironment.IsDevelopment();
@@ -69,7 +69,7 @@ namespace NIHR.CRN.CPMS.Common
                 if (string.IsNullOrWhiteSpace(_bypassSettings.Value.BypassEmail))
                 {
                     LogBypassEmailNotSet();
-                    return Result<TUserProfile>.Fail("Bypass email not set");
+                    throw new Exception("Bypass email not set");
                 }
 
                 userProfile = await UpdateOrCreateUserProfile(_bypassSettings.Value.BypassEmail);
@@ -79,13 +79,13 @@ namespace NIHR.CRN.CPMS.Common
                 if (string.IsNullOrWhiteSpace(email))
                 {
                     LogEmailHeaderNotSet();
-                    return Result<TUserProfile>.Fail("Email address not set");
+                    throw new Exception("Email address not set");
                 }
 
                 if (string.IsNullOrWhiteSpace(uuid))
                 {
                     LogUuidHeaderNotSet();
-                    return Result<TUserProfile>.Fail("UUID not set");
+                    throw new Exception("UUID not set");
                 }
 
                 var cacheKey = new CacheKey(uuid!);
@@ -119,7 +119,7 @@ namespace NIHR.CRN.CPMS.Common
                 }
             }
 
-            return Result<TUserProfile>.Success(userProfile);
+            return userProfile;
         }
 
         private bool ProfileHasChanged(TRefPerson person, string email, string? firstName, string? lastName,

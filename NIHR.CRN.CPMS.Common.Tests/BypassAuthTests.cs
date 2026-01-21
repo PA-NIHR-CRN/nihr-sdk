@@ -23,9 +23,9 @@ public class BypassAuthTests
         var result = await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
         
         fixture.Log.GetSnapshot().Count(i => i.Level == LogLevel.Warning).Should().Be(1);
-        result.IsSuccess.Should().BeTrue();
-        result.Value.EmailId.Should().Be(email);
-        result.Value.UserId.Should().Be(uuid);
+
+        result.EmailId.Should().Be(email);
+        result.UserId.Should().Be(uuid);
     }
     
     [Test]
@@ -42,9 +42,9 @@ public class BypassAuthTests
         var result = await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
         
         fixture.Log.GetSnapshot().Count(i => i.Level == LogLevel.Warning).Should().Be(0);
-        result.IsSuccess.Should().BeTrue();
-        result.Value.EmailId.Should().Be(bypassEmail);
-        result.Value.UserId.Should().BeNull();
+
+        result.EmailId.Should().Be(bypassEmail);
+        result.UserId.Should().BeNull();
     }
     
     [Test]
@@ -76,8 +76,7 @@ public class BypassAuthTests
         var result = await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
         
         fixture.Log.GetSnapshot().Count(i => i.Level == LogLevel.Warning).Should().Be(0);
-        result.IsSuccess.Should().BeTrue();
-        result.Value.EmailId.Should().Be(bypassEmail);
-        result.Value.UserId.Should().Be(bypassUuid);
+        result.EmailId.Should().Be(bypassEmail);
+        result.UserId.Should().Be(bypassUuid);
     }
 }

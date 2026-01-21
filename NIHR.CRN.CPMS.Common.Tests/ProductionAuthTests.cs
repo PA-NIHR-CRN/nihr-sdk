@@ -179,8 +179,7 @@ public class ProductionAuthTests()
         Assert.That(userProfile.Person.Email, Is.EqualTo(email));
         Assert.That(userProfile.Person.OrcId, Is.EqualTo(orcId));
         
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(userProfile);
+        result.Should().BeEquivalentTo(userProfile);
     }
     
     //TODO: Test caching

@@ -20,6 +20,7 @@ namespace NIHR.CRN.CPMS.Common
         private readonly IOptions<AuthenticationBypassSettings>? _bypassSettings;
         private readonly IMemoryCache _memoryCache;
         private readonly IHostEnvironment _hostEnvironment;
+        private readonly TimeProvider _timeProvider;
         private readonly ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>? _logger;
 
         public CpmsUserProfileManager(
@@ -27,12 +28,14 @@ namespace NIHR.CRN.CPMS.Common
             IOptions<AuthenticationBypassSettings>? bypassSettings,
             IMemoryCache memoryCache,
             ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>? logger,
-            IHostEnvironment hostEnvironment)
+            IHostEnvironment hostEnvironment,
+            TimeProvider timeProvider)
         {
             _userStore = userStore;
             _bypassSettings = bypassSettings;
             _memoryCache = memoryCache;
             _hostEnvironment = hostEnvironment;
+            _timeProvider = timeProvider;
             _logger = logger;
         }
 
@@ -79,13 +82,13 @@ namespace NIHR.CRN.CPMS.Common
                 if (string.IsNullOrWhiteSpace(email))
                 {
                     LogEmailHeaderNotSet();
-                    throw new Exception("Email address not set");
+                    throw new ArgumentException("Email address not set", nameof(email));
                 }
 
                 if (string.IsNullOrWhiteSpace(uuid))
                 {
                     LogUuidHeaderNotSet();
-                    throw new Exception("UUID not set");
+                    throw new ArgumentException("UUID not set", nameof(uuid));
                 }
 
                 var cacheKey = new CacheKey(uuid!);
@@ -115,7 +118,7 @@ namespace NIHR.CRN.CPMS.Common
                 else
                 {
                     userProfile = await UpdateOrCreateUserProfile(email!, uuid, UpdatePersonalDetails);
-                    _memoryCache.Set(cacheKey, userProfile);
+                    _memoryCache.Set(cacheKey, userProfile, _cacheTtl);
                 }
             }
 
@@ -184,13 +187,14 @@ namespace NIHR.CRN.CPMS.Common
             {
                 userProfile.UserClaimMembership.Add(new TUserClaimMembership
                 {
-                    ClaimTypeId = (long)ClaimTypes.PublicUser
+                    ClaimTypeId = (long)ClaimTypes.PublicUser,
+                    CreatedDate = _timeProvider.GetLocalNow().DateTime
                 });
             }
             
             updatePersonalDetails?.Invoke(userProfile.Person);
             userProfile.Person.Email = email;
-            userProfile.LastLogin = DateTime.Now;
+            userProfile.LastLogin = _timeProvider.GetLocalNow().DateTime;
 
             await _userStore.SaveChangesAsync();
 

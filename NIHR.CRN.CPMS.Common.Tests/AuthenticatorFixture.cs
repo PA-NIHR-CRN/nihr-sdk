@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging.Testing;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Time.Testing;
 using NIHR.CRN.CPMS.Abstractions;
 using NIHR.CRN.CPMS.Common.Tests.Database;
 
@@ -48,7 +49,8 @@ public class AuthenticatorFixture : IDisposable
             new CpmsUserProfileManager<UserProfile, RefPerson, UserClaimMembership>(
                 _userStore,
                 Options.Create(bypassSettings), _memoryCache, logger,
-                new TestHostEnvironment(envName, "CPMS", string.Empty, null));
+                new TestHostEnvironment(envName, "CPMS", string.Empty, null),
+                new FakeTimeProvider(new DateTimeOffset(2024, 15, 03, 10, 19, 45, TimeSpan.Zero)));
     }
 
     public void Dispose()

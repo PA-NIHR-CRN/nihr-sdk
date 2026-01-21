@@ -20,7 +20,7 @@ public class BypassAuthTests
     {
         using var fixture = new AuthenticatorFixture(new(){Bypass = true, BypassEmail = bypassEmail}, AuthenticatorFixture.EnvProduction);
         
-        var result = await fixture.Authenticator.SynchronizeUserProfileAsync(email, uuid, firstName, lastName, orcId);
+        var result = await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
         
         fixture.Log.GetSnapshot().Count(i => i.Level == LogLevel.Warning).Should().Be(1);
         result.IsSuccess.Should().BeTrue();
@@ -39,7 +39,7 @@ public class BypassAuthTests
         const string orcId = "123456";
         const string uuid = "FE5329D2-2A95-484C-BF7E-3B8CA8F8444E";
         
-        var result = await fixture.Authenticator.SynchronizeUserProfileAsync(email, uuid, firstName, lastName, orcId);
+        var result = await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
         
         fixture.Log.GetSnapshot().Count(i => i.Level == LogLevel.Warning).Should().Be(0);
         result.IsSuccess.Should().BeTrue();
@@ -73,7 +73,7 @@ public class BypassAuthTests
 
         fixture.Context.SaveChanges();
         
-        var result = await fixture.Authenticator.SynchronizeUserProfileAsync(email, uuid, firstName, lastName, orcId);
+        var result = await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
         
         fixture.Log.GetSnapshot().Count(i => i.Level == LogLevel.Warning).Should().Be(0);
         result.IsSuccess.Should().BeTrue();

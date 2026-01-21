@@ -7,15 +7,15 @@ namespace NIHR.CRN.CPMS.Common
 {
     public static class DiExtensions
     {
-        public static IServiceCollection AddCpmsAuthentication<TUserProfile, TRefPerson, TUserClaimMembership>
+        public static IServiceCollection AddCpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>
             (this IServiceCollection services)
             where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership>, new()
             where TRefPerson : class, IRefPerson, new()
             where TUserClaimMembership : class, IUserClaimMembership, new()
         {
             return services
-                .AddTransient<ICpmsAuthenticator<TUserProfile>,
-                    CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>();
+                .AddTransient<ICpmsUserProfileManager<TUserProfile>,
+                    CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>();
         }
 
         public static void AddAuthBypassSettings(this IServiceCollection services, IConfiguration configuration,

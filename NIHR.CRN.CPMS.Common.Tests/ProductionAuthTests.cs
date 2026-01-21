@@ -17,7 +17,7 @@ public class ProductionAuthTests()
         const string orcId = "123456";
         const string uuid = "FE5329D2-2A95-484C-BF7E-3B8CA8F8444E";
         
-        await fixture.Authenticator.SynchronizeUserProfileAsync(email, uuid, firstName, lastName, orcId);
+        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
         
         Assert.That(fixture.Context.RefPerson.Count(i => i.Email == email), Is.EqualTo(1));
 
@@ -48,7 +48,7 @@ public class ProductionAuthTests()
         
         await fixture.Context.SaveChangesAsync();
 
-        await fixture.Authenticator.SynchronizeUserProfileAsync(
+        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(
             email, uuid, "Belinda", "Bosworth", "123456");
         
         Assert.That(fixture.Context.RefPerson.Count(i => i.Email == email), Is.EqualTo(1));
@@ -83,7 +83,7 @@ public class ProductionAuthTests()
         
         await fixture.Context.SaveChangesAsync();
 
-        await fixture.Authenticator.SynchronizeUserProfileAsync(email, uuid, "Callie", "Cortez", "345231");
+        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, "Callie", "Cortez", "345231");
         
         Assert.That(fixture.Context.RefPerson.Count(i => i.Email == email), Is.EqualTo(1));
 
@@ -124,7 +124,7 @@ public class ProductionAuthTests()
         
         await fixture.Context.SaveChangesAsync();
         
-        await fixture.Authenticator.SynchronizeUserProfileAsync(email, uuid, firstName, lastName, orcId);
+        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
         
         var userProfile = AssertHasExactlyOneUserProfileAndRefPerson(fixture.Context, uuid, email);
         
@@ -169,7 +169,7 @@ public class ProductionAuthTests()
         
         await fixture.Context.SaveChangesAsync();
         
-        var result = await fixture.Authenticator.SynchronizeUserProfileAsync(email, uuid, firstName, lastName, orcId);
+        var result = await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
         
         AssertEmailDoesNotExist(fixture.Context, oldEmail);
         var userProfile = AssertHasExactlyOneUserProfileAndRefPerson(fixture.Context, uuid, email);
@@ -182,6 +182,8 @@ public class ProductionAuthTests()
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(userProfile);
     }
+    
+    //TODO: Test caching
     
     private void AssertEmailDoesNotExist(TestDbContext context, string email)
     {

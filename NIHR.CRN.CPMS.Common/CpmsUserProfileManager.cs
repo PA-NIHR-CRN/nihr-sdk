@@ -9,7 +9,7 @@ using NIHR.CRN.CPMS.Abstractions;
 namespace NIHR.CRN.CPMS.Common
 {
     public partial class
-        CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership> : ICpmsAuthenticator<TUserProfile>
+        CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership> : ICpmsUserProfileManager<TUserProfile>
         where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership>, new()
         where TRefPerson : class, IRefPerson, new()
         where TUserClaimMembership : class, IUserClaimMembership, new()
@@ -20,13 +20,13 @@ namespace NIHR.CRN.CPMS.Common
         private readonly IOptions<AuthenticationBypassSettings>? _bypassSettings;
         private readonly IMemoryCache _memoryCache;
         private readonly IHostEnvironment _hostEnvironment;
-        private readonly ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>? _logger;
+        private readonly ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>? _logger;
 
-        public CpmsAuthenticator(
+        public CpmsUserProfileManager(
             ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> userStore,
             IOptions<AuthenticationBypassSettings>? bypassSettings,
             IMemoryCache memoryCache,
-            ILogger<CpmsAuthenticator<TUserProfile, TRefPerson, TUserClaimMembership>>? logger,
+            ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>? logger,
             IHostEnvironment hostEnvironment)
         {
             _userStore = userStore;
@@ -52,7 +52,7 @@ namespace NIHR.CRN.CPMS.Common
             Message = "The UUID must be set for all requests")]
         private partial void LogUuidHeaderNotSet();
 
-        public async Task<Result<TUserProfile>> SynchronizeUserProfileAsync(string? email, string? uuid, 
+        public async Task<Result<TUserProfile>> FetchAndUpdateUserProfileAsync(string? email, string? uuid, 
             string? firstName, string? lastName, string? orcId)
         {
             var isDevelopmentEnvironment = _hostEnvironment.IsDevelopment();

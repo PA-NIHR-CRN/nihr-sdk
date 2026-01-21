@@ -9,6 +9,7 @@ public class RefPerson : IRefPerson
     public string? LastName { get; set; }
     public string? Email { get; set; }
     public string? OrcId { get; set; }
+    public bool Active { get; set; }
 
     public ICollection<UserProfile> UserProfiles { get; } = new List<UserProfile>();
 

@@ -7,6 +7,7 @@ public interface IUserProfile<TRefPerson, TUserClaimMembership>
     string EmailId { get; set; }
     DateTime? LastLogin { get; set; }
     string? UserId { get; set; }
+    bool Active { get; set; }
     
     TRefPerson Person { get; set; }
     

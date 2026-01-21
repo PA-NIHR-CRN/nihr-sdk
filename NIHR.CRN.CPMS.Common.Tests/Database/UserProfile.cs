@@ -9,6 +9,7 @@ public class UserProfile : IUserProfile<RefPerson, UserClaimMembership>
     public DateTime? LastLogin { get; set; }
     public string? UserId { get; set; }
     public RefPerson Person { get; set; }
+    public bool Active { get; set; }
     public ICollection<UserClaimMembership> UserClaimMembership { get; } = new List<UserClaimMembership>();
     
     public long RefPersonId { get; set; }

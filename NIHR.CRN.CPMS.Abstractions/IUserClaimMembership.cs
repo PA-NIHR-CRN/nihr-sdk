@@ -4,4 +4,5 @@ public interface IUserClaimMembership
 {
     long ClaimTypeId { get; set; }
     DateTime? CreatedDate { get; set; }
+    bool Active { get; set; }
 }

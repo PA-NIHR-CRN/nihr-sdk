@@ -10,4 +10,6 @@ public class UserClaimMembership : IUserClaimMembership
 
     public long UserProfileId { get; set; }
     public UserProfile UserProfile { get; set; }
+    
+    public bool Active { get; set; }
 }

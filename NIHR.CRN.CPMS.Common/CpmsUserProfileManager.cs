@@ -168,7 +168,11 @@ namespace NIHR.CRN.CPMS.Common
                         EmailId = email,
                         LastLogin = DateTime.Now,
                         UserId = uuid,
-                        Person = person ?? new TRefPerson()
+                        Active = true,
+                        Person = person ?? new TRefPerson
+                        {
+                            Active = true
+                        }
                     };
                     _userStore.AddUserProfile(userProfile);
                 }
@@ -188,7 +192,8 @@ namespace NIHR.CRN.CPMS.Common
                 userProfile.UserClaimMembership.Add(new TUserClaimMembership
                 {
                     ClaimTypeId = (long)ClaimTypes.PublicUser,
-                    CreatedDate = _timeProvider.GetLocalNow().DateTime
+                    CreatedDate = _timeProvider.GetLocalNow().DateTime,
+                    Active = true,
                 });
             }
             

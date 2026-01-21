@@ -6,4 +6,5 @@ public interface IRefPerson
     public string? LastName { get; set; }
     public string? Email { get; set; }
     public string? OrcId { get; set; }
+    bool Active { get; set; }
 }

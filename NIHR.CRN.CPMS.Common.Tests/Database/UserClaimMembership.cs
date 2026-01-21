@@ -6,7 +6,7 @@ public class UserClaimMembership : IUserClaimMembership
 {
     public long Id { get; set; }
     public long ClaimTypeId { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime? CreatedDate { get; set; }
 
     public long UserProfileId { get; set; }
     public UserProfile UserProfile { get; set; }

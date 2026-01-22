@@ -30,7 +30,7 @@ public class AuthenticatorFixture : IDisposable
         _connection = new SqliteConnection("Filename=:memory:");
         _connection.Open();
 
-        FakeLogger<CpmsUserProfileManager<UserProfile, RefPerson, UserClaimMembership>> logger = new(Log); 
+        FakeLogger<CpmsUserProfileManagerWithBypass<UserProfile, RefPerson, UserClaimMembership>> logger = new(Log); 
         
         var contextOptions = new DbContextOptionsBuilder<TestDbContext>()
             .UseSqlite(_connection)
@@ -46,11 +46,11 @@ public class AuthenticatorFixture : IDisposable
         _memoryCache = new MemoryCache(new MemoryCacheOptions());
         
         UserProfileManager =
-            new CpmsUserProfileManager<UserProfile, RefPerson, UserClaimMembership>(
+            new CpmsUserProfileManagerWithBypass<UserProfile, RefPerson, UserClaimMembership>(
                 _userStore,
                 Options.Create(bypassSettings), _memoryCache, logger,
                 new TestHostEnvironment(envName, "CPMS", string.Empty, null),
-                new FakeTimeProvider(new DateTimeOffset(2024, 15, 03, 10, 19, 45, TimeSpan.Zero)));
+                new FakeTimeProvider(new DateTimeOffset(2024, 03, 15, 10, 19, 45, TimeSpan.Zero)));
     }
 
     public void Dispose()

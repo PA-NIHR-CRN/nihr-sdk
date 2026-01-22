@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NIHR.CRN.CPMS.Abstractions;
 
 namespace NIHR.CRN.CPMS.Common
@@ -17,24 +15,18 @@ namespace NIHR.CRN.CPMS.Common
         private readonly TimeSpan _cacheTtl = TimeSpan.FromMinutes(1);
 
         private readonly ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> _userStore;
-        private readonly IOptions<AuthenticationBypassSettings>? _bypassSettings;
         private readonly IMemoryCache _memoryCache;
-        private readonly IHostEnvironment _hostEnvironment;
         private readonly TimeProvider _timeProvider;
         private readonly ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>? _logger;
-
+        
         public CpmsUserProfileManager(
             ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> userStore,
-            IOptions<AuthenticationBypassSettings>? bypassSettings,
             IMemoryCache memoryCache,
             ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>? logger,
-            IHostEnvironment hostEnvironment,
             TimeProvider timeProvider)
         {
             _userStore = userStore;
-            _bypassSettings = bypassSettings;
             _memoryCache = memoryCache;
-            _hostEnvironment = hostEnvironment;
             _timeProvider = timeProvider;
             _logger = logger;
         }
@@ -55,74 +47,55 @@ namespace NIHR.CRN.CPMS.Common
             Message = "The UUID must be set for all requests")]
         private partial void LogUuidHeaderNotSet();
 
-        public async Task<TUserProfile> FetchAndUpdateUserProfileAsync(string? email, string? uuid, 
+        public async virtual Task<TUserProfile> FetchAndUpdateUserProfileAsync(string? email, string? uuid,
             string? firstName, string? lastName, string? orcId)
         {
-            var isDevelopmentEnvironment = _hostEnvironment.IsDevelopment();
-            
-            if (_bypassSettings?.Value.Bypass == true && !isDevelopmentEnvironment)
+            TUserProfile result;
+
+            if (string.IsNullOrWhiteSpace(email))
             {
-                LogAttemptToBypassOutsideOfDev();
+                LogEmailHeaderNotSet();
+                throw new ArgumentException("Email address not set", nameof(email));
             }
 
-            TUserProfile userProfile;
-
-            if (isDevelopmentEnvironment && _bypassSettings?.Value.Bypass == true)
+            if (string.IsNullOrWhiteSpace(uuid))
             {
-                if (string.IsNullOrWhiteSpace(_bypassSettings.Value.BypassEmail))
-                {
-                    LogBypassEmailNotSet();
-                    throw new Exception("Bypass email not set");
-                }
-
-                userProfile = await UpdateOrCreateUserProfile(_bypassSettings.Value.BypassEmail);
+                LogUuidHeaderNotSet();
+                throw new ArgumentException("UUID not set", nameof(uuid));
             }
-            else
+
+            var cacheKey = new CacheKey(uuid!);
+
+            void UpdatePersonalDetails(TRefPerson person)
             {
-                if (string.IsNullOrWhiteSpace(email))
-                {
-                    LogEmailHeaderNotSet();
-                    throw new ArgumentException("Email address not set", nameof(email));
-                }
+                person.FirstName = firstName ?? string.Empty;
+                person.LastName = lastName ?? string.Empty;
+                person.OrcId = orcId ?? string.Empty;
+            }
 
-                if (string.IsNullOrWhiteSpace(uuid))
+            // LastLogin timestamp is intentionally set only on a cache miss or on a profile change. The
+            // cache ttl is 60 seconds, so the timestamp will still be updated frequently.
+            if (_memoryCache.TryGetValue(cacheKey, out TUserProfile? cachedProfile))
+            {
+                if (ProfileHasChanged(cachedProfile!.Person, email!, firstName, lastName, orcId))
                 {
-                    LogUuidHeaderNotSet();
-                    throw new ArgumentException("UUID not set", nameof(uuid));
-                }
-
-                var cacheKey = new CacheKey(uuid!);
-
-                void UpdatePersonalDetails(TRefPerson person)
-                {
-                    person.FirstName = firstName ?? string.Empty;
-                    person.LastName = lastName ?? string.Empty;
-                    person.OrcId = orcId ?? string.Empty;
-                }
-
-                // LastLogin timestamp is intentionally set only on a cache miss or on a profile change. The
-                // cache ttl is 60 seconds, so the timestamp will still be updated frequently.
-                if (_memoryCache.TryGetValue(cacheKey, out TUserProfile? cachedProfile))
-                {
-                    if (ProfileHasChanged(cachedProfile!.Person, email!, firstName, lastName, orcId))
-                    {
-                        // If the personal details have changed, immediately update the record and cache...
-                        userProfile = await UpdateOrCreateUserProfile(email!, uuid, UpdatePersonalDetails);
-                        _memoryCache.Set(cacheKey, userProfile, _cacheTtl);
-                    }
-                    else
-                    {
-                        userProfile = cachedProfile;
-                    }
+                    // If the personal details have changed, immediately update the record and cache...
+                    result = await UpdateOrCreateUserProfile(email!, uuid, UpdatePersonalDetails);
+                    _memoryCache.Set(cacheKey, result, _cacheTtl);
                 }
                 else
                 {
-                    userProfile = await UpdateOrCreateUserProfile(email!, uuid, UpdatePersonalDetails);
-                    _memoryCache.Set(cacheKey, userProfile, _cacheTtl);
+                    result = cachedProfile;
                 }
             }
+            else
+            {
+                result = await UpdateOrCreateUserProfile(email!, uuid, UpdatePersonalDetails);
+                _memoryCache.Set(cacheKey, result, _cacheTtl);
+            }
 
-            return userProfile;
+
+            return result;
         }
 
         private bool ProfileHasChanged(TRefPerson person, string email, string? firstName, string? lastName,
@@ -144,7 +117,7 @@ namespace NIHR.CRN.CPMS.Common
             public string? Uuid { get; }
         }
 
-        private async Task<TUserProfile> UpdateOrCreateUserProfile(string email, string? uuid = null,
+        protected async Task<TUserProfile> UpdateOrCreateUserProfile(string email, string? uuid = null,
             Action<TRefPerson>? updatePersonalDetails = null)
         {
             if (string.IsNullOrWhiteSpace(email))
@@ -196,7 +169,7 @@ namespace NIHR.CRN.CPMS.Common
                     Active = true,
                 });
             }
-            
+
             updatePersonalDetails?.Invoke(userProfile.Person);
             userProfile.Person.Email = email;
             userProfile.LastLogin = _timeProvider.GetLocalNow().DateTime;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,11 @@ public class LocalContentProvider : IContentProvider
     public LocalContentProvider(string rootPath)
     {
         _rootPath = rootPath;
+    }
+
+    public Task<(List<TContent>, int)> GetContentAsListWithTotalAsync<TContent>(ContentRequestModel contentRequest, CancellationToken cancellationToken = default) where TContent : new()
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<TContent> GetContentAsync<TContent>(

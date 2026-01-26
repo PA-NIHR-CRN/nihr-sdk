@@ -32,6 +32,8 @@ namespace NIHR.CRN.CPMS.Common
             _timeProvider = timeProvider;
             _logger = logger;
         }
+        
+        private const long SystemUserId = 1;
 
         [LoggerMessage(EventId = 10001, Level = LogLevel.Warning,
             Message = "Authentication bypass can only be enabled in a development environment")]
@@ -150,6 +152,8 @@ namespace NIHR.CRN.CPMS.Common
                             Active = true,
                             CreatedDate = _timeProvider.GetLocalNow().DateTime,
                             ModifiedDate = _timeProvider.GetLocalNow().DateTime,
+                            CreatedBy = SystemUserId,
+                            ModifiedBy = SystemUserId,
                             Acl = new TAcl
                             {
                                 LastUpdatedDate =  _timeProvider.GetLocalNow().DateTime,
@@ -188,5 +192,6 @@ namespace NIHR.CRN.CPMS.Common
 
             return userProfile;
         }
+
     }
 }

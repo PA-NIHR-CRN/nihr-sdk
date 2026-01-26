@@ -16,4 +16,7 @@ public class RefPerson : IRefPerson<Acl>
 
     public ICollection<UserProfile> UserProfiles { get; } = new List<UserProfile>();
 
-    public Acl Acl { get; set; }}
+    public Acl Acl { get; set; }
+    public long CreatedBy { get; set; }
+    public long ModifiedBy { get; set; }
+}

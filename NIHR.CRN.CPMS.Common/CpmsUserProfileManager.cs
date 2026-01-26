@@ -142,9 +142,12 @@ namespace NIHR.CRN.CPMS.Common
                         LastLogin = DateTime.Now,
                         UserId = uuid,
                         Active = true,
+                        
                         Person = person ?? new TRefPerson
                         {
-                            Active = true
+                            Active = true,
+                            CreatedDate = _timeProvider.GetLocalNow().DateTime,
+                            ModifiedDate = _timeProvider.GetLocalNow().DateTime
                         }
                     };
                     _userStore.AddUserProfile(userProfile);

@@ -7,4 +7,7 @@ public interface IRefPerson
     public string? Email { get; set; }
     public string? OrcId { get; set; }
     bool Active { get; set; }
+    
+    public DateTime CreatedDate { get; set; }
+    public DateTime ModifiedDate { get; set; }
 }

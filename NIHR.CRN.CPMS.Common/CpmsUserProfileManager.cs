@@ -11,7 +11,7 @@ namespace NIHR.CRN.CPMS.Common
         where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership, TAcl>, new()
         where TRefPerson : class, IRefPerson<TAcl>, new()
         where TUserClaimMembership : class, IUserClaimMembership, new()
-        where TAcl : new()
+        where TAcl : IAcl, new()
     {
         private readonly TimeSpan _cacheTtl = TimeSpan.FromMinutes(1);
 
@@ -150,7 +150,11 @@ namespace NIHR.CRN.CPMS.Common
                             Active = true,
                             CreatedDate = _timeProvider.GetLocalNow().DateTime,
                             ModifiedDate = _timeProvider.GetLocalNow().DateTime,
-                            Acl = new TAcl()
+                            Acl = new TAcl
+                            {
+                                LastUpdatedDate =  _timeProvider.GetLocalNow().DateTime,
+                                CreatedDate = _timeProvider.GetLocalNow().DateTime
+                            }
                         }
                     };
                     _userStore.AddUserProfile(userProfile);

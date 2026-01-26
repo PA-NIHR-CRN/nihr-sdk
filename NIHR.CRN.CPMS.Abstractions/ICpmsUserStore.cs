@@ -8,6 +8,7 @@ public interface ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership, 
     where TUserProfile : IUserProfile<TRefPerson, TUserClaimMembership, TAcl>, new()
     where TRefPerson : IRefPerson<TAcl>, new()
     where TUserClaimMembership : IUserClaimMembership, new()
+    where TAcl : IAcl
 {
     Task<TUserProfile?> GetUserProfileByEmailAsync(string email);
 

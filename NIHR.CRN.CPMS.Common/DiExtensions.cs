@@ -12,7 +12,7 @@ namespace NIHR.CRN.CPMS.Common
             where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership, TAcl>, new()
             where TRefPerson : class, IRefPerson<TAcl>, new()
             where TUserClaimMembership : class, IUserClaimMembership, new()
-            where TAcl : new()
+            where TAcl : IAcl, new()
         {
             if (enableBypass)
             {

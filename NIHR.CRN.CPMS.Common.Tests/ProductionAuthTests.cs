@@ -42,7 +42,8 @@ public class ProductionAuthTests()
             EmailId = email,
             Person = new RefPerson()
             {
-                Email = email
+                Email = email,
+                Acl = new()
             }
         });
         
@@ -70,7 +71,8 @@ public class ProductionAuthTests()
             EmailId = email,
             Person = new RefPerson()
             {
-                Email = email
+                Email = email,
+                Acl = new()
             },
             UserClaimMembership =
             {
@@ -111,7 +113,8 @@ public class ProductionAuthTests()
                 FirstName = "oldValue",
                 LastName = "oldValue",
                 OrcId = "oldValue",
-                Email = email
+                Email = email,
+                Acl = new()
             },
             UserClaimMembership =
             {
@@ -156,7 +159,8 @@ public class ProductionAuthTests()
                 FirstName = "oldFirstName",
                 LastName = "oldLastName",
                 OrcId = "oldOrcId",
-                Email = oldEmail
+                Email = oldEmail,
+                Acl = new()
             },
             UserClaimMembership =
             {

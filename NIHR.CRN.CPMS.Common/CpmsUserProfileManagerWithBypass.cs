@@ -9,21 +9,22 @@ using NIHR.CRN.CPMS.Abstractions;
 namespace NIHR.CRN.CPMS.Common
 {
     public partial class
-        CpmsUserProfileManagerWithBypass<TUserProfile, TRefPerson, TUserClaimMembership> : 
-        CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>
-        where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership>, new()
-        where TRefPerson : class, IRefPerson, new()
+        CpmsUserProfileManagerWithBypass<TUserProfile, TRefPerson, TUserClaimMembership, TAcl> : 
+        CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership, TAcl>
+        where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership, TAcl>, new()
+        where TRefPerson : class, IRefPerson<TAcl>, new()
         where TUserClaimMembership : class, IUserClaimMembership, new()
+        where TAcl : new()
     {
         private readonly IOptions<AuthenticationBypassSettings>? _bypassSettings;
         private readonly IHostEnvironment _hostEnvironment;
-        private readonly ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>? _logger;
+        private readonly ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership, TAcl>>? _logger;
 
         public CpmsUserProfileManagerWithBypass(
-            ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> userStore,
+            ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership, TAcl> userStore,
             IOptions<AuthenticationBypassSettings>? bypassSettings,
             IMemoryCache memoryCache,
-            ILogger<CpmsUserProfileManagerWithBypass<TUserProfile, TRefPerson, TUserClaimMembership>>? logger,
+            ILogger<CpmsUserProfileManagerWithBypass<TUserProfile, TRefPerson, TUserClaimMembership, TAcl>>? logger,
             IHostEnvironment hostEnvironment,
             TimeProvider timeProvider)
         : base(userStore, memoryCache, logger, timeProvider)

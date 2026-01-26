@@ -7,23 +7,24 @@ namespace NIHR.CRN.CPMS.Common
 {
     public static class DiExtensions
     {
-        public static IServiceCollection AddCpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>
+        public static IServiceCollection AddCpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership, TAcl>
             (this IServiceCollection services, bool enableBypass)
-            where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership>, new()
-            where TRefPerson : class, IRefPerson, new()
+            where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership, TAcl>, new()
+            where TRefPerson : class, IRefPerson<TAcl>, new()
             where TUserClaimMembership : class, IUserClaimMembership, new()
+            where TAcl : new()
         {
             if (enableBypass)
             {
                 return services
                     .AddTransient<ICpmsUserProfileManager<TUserProfile>,
-                        CpmsUserProfileManagerWithBypass<TUserProfile, TRefPerson, TUserClaimMembership>>();
+                        CpmsUserProfileManagerWithBypass<TUserProfile, TRefPerson, TUserClaimMembership, TAcl>>();
             }
             else
             {
                 return services
                     .AddTransient<ICpmsUserProfileManager<TUserProfile>,
-                        CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>();
+                        CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership, TAcl>>();
             }
         }
 

@@ -3,7 +3,7 @@ using NIHR.CRN.CPMS.Abstractions;
 
 namespace NIHR.CRN.CPMS.Common.Tests.Database;
 
-public class TestUserStore (TestDbContext dbContext) : ICpmsUserStore<UserProfile, RefPerson, UserClaimMembership>
+public class TestUserStore (TestDbContext dbContext) : ICpmsUserStore<UserProfile, RefPerson, UserClaimMembership, Acl>
 {
     public Task<UserProfile?> GetUserProfileByEmailAsync(string email) =>
         UserProfilesWithRoles.SingleOrDefaultAsync(i => i.EmailId == email);

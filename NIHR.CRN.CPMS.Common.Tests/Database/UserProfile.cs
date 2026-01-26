@@ -2,7 +2,7 @@
 
 namespace NIHR.CRN.CPMS.Common.Tests.Database;
 
-public class UserProfile : IUserProfile<RefPerson, UserClaimMembership>
+public class UserProfile : IUserProfile<RefPerson, UserClaimMembership, Acl>
 {
     public long Id { get; set; }
     public string EmailId { get; set; }

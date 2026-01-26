@@ -25,5 +25,11 @@ public class TestDbContext : DbContext
             .WithOne(e => e.Person)
             .HasForeignKey(e => e.RefPersonId)
             .HasPrincipalKey(e => e.Id);
+
+        modelBuilder.Entity<RefPerson>()
+            .HasOne(e => e.Acl)
+            .WithMany(e => e.RefPeople)
+            .HasForeignKey(e => e.AclId)
+            .HasPrincipalKey(e => e.Id);
     }
 }

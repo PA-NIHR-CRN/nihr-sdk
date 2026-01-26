@@ -67,7 +67,8 @@ public class BypassAuthTests
                 FirstName = "",
                 LastName = "",
                 OrcId = "",
-                Email = bypassEmail
+                Email = bypassEmail,
+                Acl = new()
             }
         });
 

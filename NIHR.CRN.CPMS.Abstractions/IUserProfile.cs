@@ -1,7 +1,7 @@
 ﻿namespace NIHR.CRN.CPMS.Abstractions;
 
-public interface IUserProfile<TRefPerson, TUserClaimMembership>
-    where TRefPerson : IRefPerson
+public interface IUserProfile<TRefPerson, TUserClaimMembership, TAcl>
+    where TRefPerson : IRefPerson<TAcl>
     where TUserClaimMembership : IUserClaimMembership
 {
     string EmailId { get; set; }

@@ -7,22 +7,24 @@ using NIHR.CRN.CPMS.Abstractions;
 namespace NIHR.CRN.CPMS.Common
 {
     public partial class
-        CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership> : ICpmsUserProfileManager<TUserProfile>
-        where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership>, new()
-        where TRefPerson : class, IRefPerson, new()
+        CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership, TAcl> : ICpmsUserProfileManager<TUserProfile>
+        where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership, TAcl>, new()
+        where TRefPerson : class, IRefPerson<TAcl>, new()
         where TUserClaimMembership : class, IUserClaimMembership, new()
+        where TAcl : new()
     {
         private readonly TimeSpan _cacheTtl = TimeSpan.FromMinutes(1);
 
-        private readonly ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> _userStore;
+        private readonly ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership, TAcl> _userStore;
         private readonly IMemoryCache _memoryCache;
         private readonly TimeProvider _timeProvider;
-        private readonly ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>? _logger;
+        private readonly ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson,
+            TUserClaimMembership, TAcl>>? _logger;
         
         public CpmsUserProfileManager(
-            ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership> userStore,
+            ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership, TAcl> userStore,
             IMemoryCache memoryCache,
-            ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership>>? logger,
+            ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership, TAcl>>? logger,
             TimeProvider timeProvider)
         {
             _userStore = userStore;
@@ -147,7 +149,8 @@ namespace NIHR.CRN.CPMS.Common
                         {
                             Active = true,
                             CreatedDate = _timeProvider.GetLocalNow().DateTime,
-                            ModifiedDate = _timeProvider.GetLocalNow().DateTime
+                            ModifiedDate = _timeProvider.GetLocalNow().DateTime,
+                            Acl = new TAcl()
                         }
                     };
                     _userStore.AddUserProfile(userProfile);

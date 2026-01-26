@@ -21,7 +21,7 @@ public class AuthenticatorFixture : IDisposable
     
     private TestUserStore _userStore;
     private MemoryCache _memoryCache;
-    public CpmsUserProfileManager<UserProfile, RefPerson, UserClaimMembership> UserProfileManager { get; private set; }
+    public CpmsUserProfileManager<UserProfile, RefPerson, UserClaimMembership, Acl> UserProfileManager { get; private set; }
     private SqliteConnection _connection;
     
 
@@ -30,7 +30,7 @@ public class AuthenticatorFixture : IDisposable
         _connection = new SqliteConnection("Filename=:memory:");
         _connection.Open();
 
-        FakeLogger<CpmsUserProfileManagerWithBypass<UserProfile, RefPerson, UserClaimMembership>> logger = new(Log); 
+        FakeLogger<CpmsUserProfileManagerWithBypass<UserProfile, RefPerson, UserClaimMembership, Acl>> logger = new(Log); 
         
         var contextOptions = new DbContextOptionsBuilder<TestDbContext>()
             .UseSqlite(_connection)
@@ -46,7 +46,7 @@ public class AuthenticatorFixture : IDisposable
         _memoryCache = new MemoryCache(new MemoryCacheOptions());
         
         UserProfileManager =
-            new CpmsUserProfileManagerWithBypass<UserProfile, RefPerson, UserClaimMembership>(
+            new CpmsUserProfileManagerWithBypass<UserProfile, RefPerson, UserClaimMembership, Acl>(
                 _userStore,
                 Options.Create(bypassSettings), _memoryCache, logger,
                 new TestHostEnvironment(envName, "CPMS", string.Empty, null),

@@ -2,7 +2,6 @@
 
 /// <summary>
 /// Provides a seam to allow different ORMs (i.e. EFCore/EF6 to be used)
-/// TODO: Move this interface to the SDK and implement in CPMS classic.
 /// </summary>
 public interface ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership, TAcl>
     where TUserProfile : IUserProfile<TRefPerson, TUserClaimMembership, TAcl>, new()
@@ -10,13 +9,13 @@ public interface ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership, 
     where TUserClaimMembership : IUserClaimMembership, new()
     where TAcl : IAcl
 {
-    Task<TUserProfile?> GetUserProfileByEmailAsync(string email);
+    Task<TUserProfile?> GetFirstOrDefaultUserProfileByEmailAsync(string email);
 
     /// <summary>
     /// Gets a user profile by UUID
     /// </summary>
     /// <returns> A user profile including all active UserClaimMembership rows</returns>
-    Task<TUserProfile?> GetUserProfileByUuidAsync(string uuid);
+    Task<TUserProfile?> GetSingleOrDefaultUserProfileByUuidAsync(string uuid);
 
     void AddUserProfile(TUserProfile userProfile);
 
@@ -26,5 +25,5 @@ public interface ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership, 
     /// Gets a user profile by email address
     /// </summary>
     /// <returns> A user profile including all active UserClaimMembership rows</returns>
-    Task<TRefPerson?> GetRefPersonByEmailAsync(string email);
+    Task<TRefPerson?> GetSingleOrDefaultRefPersonByEmailAsync(string email);
 }

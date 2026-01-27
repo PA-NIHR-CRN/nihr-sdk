@@ -131,15 +131,15 @@ namespace NIHR.CRN.CPMS.Common
 
             var userProfile = string.IsNullOrWhiteSpace(uuid)
                 ? null
-                : await _userStore.GetUserProfileByUuidAsync(uuid!);
+                : await _userStore.GetSingleOrDefaultUserProfileByUuidAsync(uuid!);
 
             if (userProfile == null)
             {
-                userProfile = await _userStore.GetUserProfileByEmailAsync(email);
+                userProfile = await _userStore.GetFirstOrDefaultUserProfileByEmailAsync(email);
 
                 if (userProfile == null)
                 {
-                    var person = await _userStore.GetRefPersonByEmailAsync(email);
+                    var person = await _userStore.GetSingleOrDefaultRefPersonByEmailAsync(email);
                     userProfile = new TUserProfile
                     {
                         EmailId = email,

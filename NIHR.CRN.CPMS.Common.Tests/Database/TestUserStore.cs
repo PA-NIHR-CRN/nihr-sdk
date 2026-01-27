@@ -5,13 +5,13 @@ namespace NIHR.CRN.CPMS.Common.Tests.Database;
 
 public class TestUserStore (TestDbContext dbContext) : ICpmsUserStore<UserProfile, RefPerson, UserClaimMembership, Acl>
 {
-    public Task<UserProfile?> GetUserProfileByEmailAsync(string email) =>
+    public Task<UserProfile?> GetFirstOrDefaultUserProfileByEmailAsync(string email) =>
         UserProfilesWithRoles.SingleOrDefaultAsync(i => i.EmailId == email);
 
-    public Task<RefPerson?> GetRefPersonByEmailAsync(string email) =>
+    public Task<RefPerson?> GetSingleOrDefaultRefPersonByEmailAsync(string email) =>
         dbContext.RefPerson.SingleOrDefaultAsync(i => i.Email == email);
 
-    public Task<UserProfile?> GetUserProfileByUuidAsync(string uuid)  =>
+    public Task<UserProfile?> GetSingleOrDefaultUserProfileByUuidAsync(string uuid)  =>
         UserProfilesWithRoles.SingleOrDefaultAsync(i => i.UserId == uuid);
 
     private IQueryable<UserProfile> UserProfilesWithRoles =>

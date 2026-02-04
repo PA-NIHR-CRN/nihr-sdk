@@ -2,7 +2,7 @@ namespace NIHR.CRN.CPMS.Abstractions;
 
 public class CpmsDeploymentInfo
 {
-    public Environment Environment { get; set; } = new Environment();
-    public Database Database { get; set; } = new Database();
-    public Application Application { get; set; } = new Application();
+    public EnvironmentInfo EnvironmentInfo { get; set; } = new EnvironmentInfo();
+    public DatabaseInfo DatabaseInfo { get; set; } = new DatabaseInfo();
+    public ApplicationInfo Application { get; set; } = new ApplicationInfo();
 }

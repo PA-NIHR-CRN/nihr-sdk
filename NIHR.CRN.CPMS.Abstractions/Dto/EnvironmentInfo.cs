@@ -1,6 +1,6 @@
 namespace NIHR.CRN.CPMS.Abstractions;
 
-public class Environment
+public class EnvironmentInfo
 {
     public string Name { get; set; } = string.Empty;
 }

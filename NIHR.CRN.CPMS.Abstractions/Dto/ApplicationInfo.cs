@@ -1,6 +1,6 @@
 namespace NIHR.CRN.CPMS.Abstractions;
 
-public class Application
+public class ApplicationInfo
 {
     public string CpmsVersion { get; set; } = string.Empty;
     public string CommitHash { get; set; } = string.Empty;

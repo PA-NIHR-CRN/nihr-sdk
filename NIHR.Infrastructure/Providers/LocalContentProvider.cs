@@ -26,10 +26,11 @@ public class LocalContentProvider : IContentProvider
         CancellationToken cancellationToken = default)
         where TContent : new()
     {
-        if (string.IsNullOrWhiteSpace(request.ContentValue))
+        if (request.FieldMatchQuery[0].ContentValue == null || 
+            string.IsNullOrWhiteSpace(request.FieldMatchQuery[0].ContentValue))
             throw new ArgumentException("Content Value cannot be null or empty.");
 
-        var filePath = Path.Combine(_rootPath, request.ContentValue + ".json");
+        var filePath = Path.Combine(_rootPath, request.FieldMatchQuery[0].ContentValue + ".json");
 
         if (!File.Exists(filePath))
             return default;

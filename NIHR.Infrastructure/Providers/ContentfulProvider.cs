@@ -7,6 +7,7 @@ using Contentful.Core;
 using Contentful.Core.Search;
 using NIHR.Infrastructure.Interfaces;
 using NIHR.Infrastructure.Models;
+using NIHR.Infrastructure.Models.ContentRequestQueryTypes;
 
 namespace NIHR.Infrastructure.Providers
 {
@@ -24,23 +25,13 @@ namespace NIHR.Infrastructure.Providers
                     CancellationToken cancellationToken = default)
                     where TContent : new()
         {
-            if (string.IsNullOrWhiteSpace(contentRequest.ContentValue))
-                throw new ArgumentException("Content Value cannot be null or empty.", nameof(contentRequest.ContentValue));
 
             if (contentRequest.ContentTreeDepth < 1 || contentRequest.ContentTreeDepth > 10)
                 throw new ArgumentOutOfRangeException(nameof(contentRequest.ContentTreeDepth), "Content tree depth must be between 1 and 10.");
 
-            var queryBuilder = QueryBuilder<TContent>.New
-                .Include(contentRequest.ContentTreeDepth)
-                .LocaleIs(contentRequest.Locale)
-                .FieldEquals(contentRequest.ContentKey, contentRequest.ContentValue);
+            var query = buildContentQuery<TContent>(contentRequest);
 
-            if (contentRequest.contentType != null)
-            {
-                queryBuilder.ContentTypeIs(contentRequest.contentType);
-            }
-
-            var entries = await _contentfulClient.GetEntries(queryBuilder, cancellationToken);
+            var entries = await _contentfulClient.GetEntries(query, cancellationToken);
             return entries.FirstOrDefault();
 
         }
@@ -54,37 +45,85 @@ namespace NIHR.Infrastructure.Providers
             if (contentRequest.ContentTreeDepth < 1 || contentRequest.ContentTreeDepth > 10)
                 throw new ArgumentOutOfRangeException(nameof(contentRequest.ContentTreeDepth), "Content tree depth must be between 1 and 10.");
 
-            var queryBuilder = QueryBuilder<TContent>.New
+            var query = buildContentQuery<TContent>(contentRequest);
+
+            var entries = await _contentfulClient.GetEntries(query, cancellationToken);
+            return (entries.ToList(), entries.Total);
+
+        }
+
+
+        private QueryBuilder<TContent> buildContentQuery<TContent>(ContentRequestModel contentRequest)
+        {
+            // base query
+            var _queryBuilder =  QueryBuilder<TContent>.New
                 .Include(contentRequest.ContentTreeDepth)
                 .LocaleIs(contentRequest.Locale);
 
-
-            if (contentRequest.ContentKey != null)
+            // Field match
+            if (contentRequest.FieldMatchQuery != null && contentRequest.FieldMatchQuery.Count > 0)
             {
-                queryBuilder.FieldEquals(contentRequest.ContentKey, contentRequest.ContentValue);
+                foreach ( ContentRequestFieldMatchQuery fieldMatch in contentRequest.FieldMatchQuery)
+                {
+                    if(fieldMatch.ContentKey == null || fieldMatch.ContentValue == null)
+                    {
+                        throw new ArgumentException("Content Value and Content Key cannot be null.", nameof(fieldMatch) );
+                    }
+                    switch (fieldMatch.SearchMatchType)
+                    {
+                        case SearchType.EXACT:
+                            _queryBuilder.FieldEquals(fieldMatch.ContentKey, fieldMatch.ContentValue);
+                            break;
+                        case SearchType.PARTIAL:
+                            _queryBuilder.FieldMatches(fieldMatch.ContentKey, fieldMatch.ContentValue);
+                            break;
+                    }
+                }
             }
 
-            if (contentRequest.contentType != null)
+            // Field includes
+            if (contentRequest.FieldIncludesQuery != null && contentRequest.FieldIncludesQuery.Count > 0)
             {
-                queryBuilder.ContentTypeIs(contentRequest.contentType);
+                foreach (ContentRequestFieldIncludesQuery fieldIncludes in contentRequest.FieldIncludesQuery)
+                {
+                    if (fieldIncludes.ContentKey == null || (fieldIncludes.ContentList != null && fieldIncludes.ContentList.Count() == 0))
+                    {
+                        throw new ArgumentException("Content Value and Content Key cannot be null.", nameof(fieldIncludes));
+                    }
+
+                    _queryBuilder.FieldIncludes(fieldIncludes.ContentKey, fieldIncludes.ContentList);
+                }
             }
 
+            if (!string.IsNullOrEmpty(contentRequest.FullTextSearchQuery))
+            {
+                _queryBuilder.FullTextSearch(contentRequest.FullTextSearchQuery);
+            }
+
+            //content type restriction
+            if (contentRequest.contentType != null && !string.IsNullOrEmpty(contentRequest.contentType))
+            {
+                _queryBuilder.ContentTypeIs(contentRequest.contentType);
+            }
+
+
+            //limit,skip, orderBY
             if (contentRequest.limit != 0)
             {
-                queryBuilder.Limit(contentRequest.limit);
+                _queryBuilder.Limit(contentRequest.limit);
             }
             if (contentRequest.skip != 0)
             {
-                queryBuilder.Skip(contentRequest.skip);
+                _queryBuilder.Skip(contentRequest.skip);
             }
-            if (contentRequest.orderBy != null)
+            if (contentRequest.orderBy != null && !string.IsNullOrEmpty(contentRequest.orderBy))
             {
 
-                queryBuilder.OrderBy(contentRequest.orderBy);
+                _queryBuilder.OrderBy(contentRequest.orderBy);
             }
 
-            var entries = await _contentfulClient.GetEntries(queryBuilder, cancellationToken);
-            return (entries.ToList(), entries.Total);
+            return _queryBuilder;
+
 
         }
 

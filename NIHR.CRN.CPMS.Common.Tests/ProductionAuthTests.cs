@@ -139,6 +139,50 @@ public class ProductionAuthTests()
     }
     
     [Test]
+    public async Task MissingNamesAreIgnored()
+    {
+        using var fixture =  new AuthenticatorFixture(new(), AuthenticatorFixture.EnvProduction);
+
+        const string email = "daria@test.com";
+        const string firstName = "Daria";
+        const string lastName = "Davis";
+        const string orcId = "78901";
+        const string uuid = "47061399-8B55-4950-88AC-58697E438759";
+
+        fixture.Context.UserProfile.Add(new()
+        {
+            EmailId = email,
+            Person = new RefPerson()
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                OrcId = orcId,
+                Email = email,
+                Acl = new()
+            },
+            UserClaimMembership =
+            {
+                new UserClaimMembership()
+                {
+                    ClaimTypeId = (long)ClaimTypes.TriageOfficer
+                }
+            }
+        });
+        
+        await fixture.Context.SaveChangesAsync();
+        
+        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, null, string.Empty, orcId);
+        
+        var userProfile = AssertHasExactlyOneUserProfileAndRefPerson(fixture.Context, uuid, email);
+        
+        Assert.That(userProfile.UserId, Is.EqualTo(uuid));
+        Assert.That(userProfile.Person.FirstName, Is.EqualTo(firstName));
+        Assert.That(userProfile.Person.LastName, Is.EqualTo(lastName));
+        Assert.That(userProfile.Person.Email, Is.EqualTo(email));
+        Assert.That(userProfile.Person.OrcId, Is.EqualTo(orcId));
+    }
+    
+    [Test]
     public async Task DetailsAreUpdatedForExistingUuid()
     {
         using var fixture =  new AuthenticatorFixture(new(), AuthenticatorFixture.EnvProduction);

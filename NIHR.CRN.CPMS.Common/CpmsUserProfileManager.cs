@@ -77,7 +77,7 @@ namespace NIHR.CRN.CPMS.Common
                     person.FirstName = firstName;
                 }
 
-                if (!string.IsNullOrWhiteSpace(firstName))
+                if (!string.IsNullOrWhiteSpace(lastName))
                 {
                     person.LastName = lastName;
                 }

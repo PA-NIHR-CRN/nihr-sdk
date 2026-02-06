@@ -72,8 +72,17 @@ namespace NIHR.CRN.CPMS.Common
 
             void UpdatePersonalDetails(TRefPerson person)
             {
-                person.FirstName = firstName ?? string.Empty;
-                person.LastName = lastName ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(firstName))
+                {
+                    person.FirstName = firstName;
+                }
+
+                if (!string.IsNullOrWhiteSpace(lastName))
+                {
+                    person.LastName = lastName;
+                }
+
+                // OrcId is optional
                 person.OrcId = orcId ?? string.Empty;
             }
 

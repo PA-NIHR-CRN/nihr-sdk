@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using CsvHelper;
-using FluentAssertions;
-using Microsoft.Data.SqlClient;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NIHR.CRN.CPMS.Abstractions;
 using NIHR.CRN.CPMS.Common.Tests.Database;

@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using NIHR.CRN.CPMS.Abstractions;
 using NIHR.CRN.CPMS.Common.Tests.Database;
 
 namespace NIHR.CRN.CPMS.Common.Tests;
 
-public class ProductionAuthTests()
+public class ProductionAuthTests
 {
     [Test]
     public async Task NewEmailAndUuid()
@@ -17,7 +18,8 @@ public class ProductionAuthTests()
         const string orcId = "123456";
         const string uuid = "FE5329D2-2A95-484C-BF7E-3B8CA8F8444E";
         
-        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
+        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid,
+            new ExtendedUserAttributes(firstName, lastName, orcId));
         
         Assert.That(fixture.Context.RefPerson.Count(i => i.Email == email), Is.EqualTo(1));
 
@@ -50,7 +52,7 @@ public class ProductionAuthTests()
         await fixture.Context.SaveChangesAsync();
 
         await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(
-            email, uuid, "Belinda", "Bosworth", "123456");
+            email, uuid,new ExtendedUserAttributes( "Belinda", "Bosworth", "123456"));
         
         Assert.That(fixture.Context.RefPerson.Count(i => i.Email == email), Is.EqualTo(1));
 
@@ -85,7 +87,8 @@ public class ProductionAuthTests()
         
         await fixture.Context.SaveChangesAsync();
 
-        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, "Callie", "Cortez", "345231");
+        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, 
+            new ExtendedUserAttributes("Callie", "Cortez", "345231"));
         
         Assert.That(fixture.Context.RefPerson.Count(i => i.Email == email), Is.EqualTo(1));
 
@@ -127,7 +130,8 @@ public class ProductionAuthTests()
         
         await fixture.Context.SaveChangesAsync();
         
-        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
+        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, 
+            new ExtendedUserAttributes(firstName, lastName, orcId));
         
         var userProfile = AssertHasExactlyOneUserProfileAndRefPerson(fixture.Context, uuid, email);
         
@@ -171,7 +175,8 @@ public class ProductionAuthTests()
         
         await fixture.Context.SaveChangesAsync();
         
-        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, null, string.Empty, orcId);
+        await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid,
+            new ExtendedUserAttributes(null, string.Empty, orcId));
         
         var userProfile = AssertHasExactlyOneUserProfileAndRefPerson(fixture.Context, uuid, email);
         
@@ -217,7 +222,8 @@ public class ProductionAuthTests()
         
         await fixture.Context.SaveChangesAsync();
         
-        var result = await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, firstName, lastName, orcId);
+        var result = await fixture.UserProfileManager.FetchAndUpdateUserProfileAsync(email, uuid, 
+            new ExtendedUserAttributes(firstName, lastName, orcId));
         
         AssertEmailDoesNotExist(fixture.Context, oldEmail);
         var userProfile = AssertHasExactlyOneUserProfileAndRefPerson(fixture.Context, uuid, email);

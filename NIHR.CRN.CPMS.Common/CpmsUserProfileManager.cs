@@ -54,7 +54,7 @@ namespace NIHR.CRN.CPMS.Common
         private partial void LogUuidHeaderNotSet();
 
 
-        public virtual async Task<TUserProfile> FetchAndUpdateUserProfileAsync(string email, string uuid,
+        public virtual async Task<TUserProfile> FetchAndUpdateUserProfileAsync(string? email, string? uuid,
             ExtendedUserAttributes? extendedUserAttributes)
         {
             TUserProfile result;
@@ -71,16 +71,16 @@ namespace NIHR.CRN.CPMS.Common
                 throw new ArgumentException("UUID not set", nameof(uuid));
             }
 
-            var cacheKey = new CacheKey(uuid);
+            var cacheKey = new CacheKey(uuid!);
 
             // LastLogin timestamp is intentionally set only on a cache miss or on a profile change. The
             // cache ttl is 60 seconds, so the timestamp will still be updated frequently.
             if (_memoryCache.TryGetValue(cacheKey, out TUserProfile? cachedProfile))
             {
-                if (ProfileHasChanged(cachedProfile!.Person, email, extendedUserAttributes))
+                if (ProfileHasChanged(cachedProfile!.Person, email!, extendedUserAttributes))
                 {
                     // If the personal details have changed, immediately update the record and cache...
-                    result = await UpdateOrCreateUserProfile(email, uuid, extendedUserAttributes);
+                    result = await UpdateOrCreateUserProfile(email!, uuid, extendedUserAttributes);
                     _memoryCache.Set(cacheKey, result, _cacheTtl);
                 }
                 else
@@ -90,7 +90,7 @@ namespace NIHR.CRN.CPMS.Common
             }
             else
             {
-                result = await UpdateOrCreateUserProfile(email, uuid, extendedUserAttributes);
+                result = await UpdateOrCreateUserProfile(email!, uuid, extendedUserAttributes);
                 _memoryCache.Set(cacheKey, result, _cacheTtl);
             }
 

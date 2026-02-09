@@ -21,7 +21,7 @@ public class AuthenticatorFixture : IDisposable
     
     private TestUserStore _userStore;
     private MemoryCache _memoryCache;
-    public CpmsUserProfileManager<UserProfile, RefPerson, UserClaimMembership, Acl> UserProfileManager { get; private set; }
+    public ICpmsUserProfileManager<UserProfile> UserProfileManager { get; private set; }
     private SqliteConnection _connection;
     
 

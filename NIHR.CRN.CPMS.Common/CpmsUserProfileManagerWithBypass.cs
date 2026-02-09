@@ -50,7 +50,7 @@ namespace NIHR.CRN.CPMS.Common
             Message = "The UUID must be set for all requests")]
         private partial void LogUuidHeaderNotSet();
 
-        public override async Task<TUserProfile> FetchAndUpdateUserProfileAsync(string email, string uuid, 
+        public override async Task<TUserProfile> FetchAndUpdateUserProfileAsync(string? email, string? uuid, 
             ExtendedUserAttributes? extendedUserAttributes)
         {
             var isDevelopmentEnvironment = _hostEnvironment.IsDevelopment();
@@ -74,7 +74,7 @@ namespace NIHR.CRN.CPMS.Common
             }
             else
             {
-                return await base.FetchAndUpdateUserProfileAsync(email, uuid, extendedUserAttributes);
+                userProfile = await base.FetchAndUpdateUserProfileAsync(email, uuid, extendedUserAttributes);
             }
 
             return userProfile;

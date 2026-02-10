@@ -71,11 +71,14 @@ namespace NIHR.Infrastructure.Providers
                     }
                     switch (fieldMatch.SearchMatchType)
                     {
-                        case SearchType.EXACT:
+                        case FieldMatchSearchType.EXACT:
                             _queryBuilder.FieldEquals(fieldMatch.ContentKey, fieldMatch.ContentValue);
                             break;
-                        case SearchType.PARTIAL:
+                        case FieldMatchSearchType.PARTIAL:
                             _queryBuilder.FieldMatches(fieldMatch.ContentKey, fieldMatch.ContentValue);
+                            break;
+                        case FieldMatchSearchType.NOT:
+                            _queryBuilder.FieldDoesNotEqual(fieldMatch.ContentKey, fieldMatch.ContentValue);
                             break;
                     }
                 }
@@ -91,7 +94,19 @@ namespace NIHR.Infrastructure.Providers
                         throw new ArgumentException("Content Value and Content Key cannot be null.", nameof(fieldIncludes));
                     }
 
-                    _queryBuilder.FieldIncludes(fieldIncludes.ContentKey, fieldIncludes.ContentList);
+
+                    switch (fieldIncludes.FieldIncludesSearchType)
+                    {
+                        case FieldIncludesSearchType.INCLUDES:
+                            _queryBuilder.FieldIncludes(fieldIncludes.ContentKey, fieldIncludes.ContentList);
+                            break;
+                        case FieldIncludesSearchType.EXCLUDES:
+                            _queryBuilder.FieldExcludes(fieldIncludes.ContentKey, fieldIncludes.ContentList);
+                            break;
+
+                    }
+
+                    
                 }
             }
 

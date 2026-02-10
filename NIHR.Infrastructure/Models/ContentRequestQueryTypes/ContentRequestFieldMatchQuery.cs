@@ -9,19 +9,26 @@ namespace NIHR.Infrastructure.Models.ContentRequestQueryTypes
     {
         public string ContentKey { get; } = "sys.id";
         public string ContentValue { get; }
-        public SearchType SearchMatchType { get; } = SearchType.EXACT;
-        public ContentRequestFieldMatchQuery( string _contentKey, string _contentValue, SearchType _searchType) {
+        public FieldMatchSearchType SearchMatchType { get; } = FieldMatchSearchType.EXACT;
+        public ContentRequestFieldMatchQuery( string _contentKey, string _contentValue, FieldMatchSearchType _searchType) {
             ContentKey = _contentKey;
             ContentValue = _contentValue;
             SearchMatchType = _searchType;
         }
+
+        public ContentRequestFieldMatchQuery(string _contentKey, string _contentValue)
+        {
+            ContentKey = _contentKey;
+            ContentValue = _contentValue;
+        }
     }
 
-    public enum SearchType
+    public enum FieldMatchSearchType
     {
 
         EXACT,
-        PARTIAL
+        PARTIAL,
+        NOT
 
     }
 }

@@ -36,7 +36,7 @@ public class WithContentTagHelper(IContentProvider contentProvider, ILogger<With
 
         var contentRequest = new ContentRequestModel
         {
-            FieldMatchQuery = new List<ContentRequestFieldMatchQuery> { new ContentRequestFieldMatchQuery("sys.id", WithContent, SearchType.EXACT) },
+            FieldMatchQuery = new List<ContentRequestFieldMatchQuery> { new ContentRequestFieldMatchQuery("sys.id", WithContent) },
         };
 
         try

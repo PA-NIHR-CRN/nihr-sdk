@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Logging;
 using NIHR.Infrastructure.Interfaces;
 using NIHR.Infrastructure.Models;
+using NIHR.Infrastructure.Models.ContentRequestQueryTypes;
 using System.Text.Encodings.Web;
 
 namespace NIHR.GovUk.AspNetCore.Mvc.TagHelpers;
@@ -35,7 +36,7 @@ public class WithContentTagHelper(IContentProvider contentProvider, ILogger<With
 
         var contentRequest = new ContentRequestModel
         {
-            ContentValue = WithContent
+            FieldMatchQuery = new List<ContentRequestFieldMatchQuery> { new ContentRequestFieldMatchQuery("sys.id", WithContent) },
         };
 
         try

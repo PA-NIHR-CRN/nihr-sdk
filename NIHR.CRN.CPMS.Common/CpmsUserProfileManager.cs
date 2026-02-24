@@ -7,7 +7,8 @@ using NIHR.CRN.CPMS.Abstractions;
 namespace NIHR.CRN.CPMS.Common
 {
     public partial class
-        CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership, TAcl> : ICpmsUserProfileManager<TUserProfile>
+        CpmsUserProfileManager<TUserProfile, TRefPerson, TUserClaimMembership, TAcl> : ICpmsUserProfileManager<
+        TUserProfile>
         where TUserProfile : class, IUserProfile<TRefPerson, TUserClaimMembership, TAcl>, new()
         where TRefPerson : class, IRefPerson<TAcl>, new()
         where TUserClaimMembership : class, IUserClaimMembership, new()
@@ -18,9 +19,10 @@ namespace NIHR.CRN.CPMS.Common
         private readonly ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership, TAcl> _userStore;
         private readonly IMemoryCache _memoryCache;
         private readonly TimeProvider _timeProvider;
+
         private readonly ILogger<CpmsUserProfileManager<TUserProfile, TRefPerson,
             TUserClaimMembership, TAcl>>? _logger;
-        
+
         public CpmsUserProfileManager(
             ICpmsUserStore<TUserProfile, TRefPerson, TUserClaimMembership, TAcl> userStore,
             IMemoryCache memoryCache,
@@ -32,16 +34,16 @@ namespace NIHR.CRN.CPMS.Common
             _timeProvider = timeProvider;
             _logger = logger;
         }
-        
+
         private const long SystemUserId = 1;
 
-        [LoggerMessage(EventId = 10001, Level = LogLevel.Warning,
-            Message = "Authentication bypass can only be enabled in a development environment")]
-        private partial void LogAttemptToBypassOutsideOfDev();
+        [LoggerMessage(EventId = 10005, Level = LogLevel.Warning,
+            Message = "The first name extended attribute is null or empty")]
+        private partial void LogFirstNameNotSet();
 
-        [LoggerMessage(EventId = 10002, Level = LogLevel.Error,
-            Message = "BypassEmail must be set when authentication bypass is enabled")]
-        private partial void LogBypassEmailNotSet();
+        [LoggerMessage(EventId = 10006, Level = LogLevel.Warning,
+            Message = "The last name extended attribute is null or empty")]
+        private partial void LogLastNameNotSet();
 
         [LoggerMessage(EventId = 10003, Level = LogLevel.Error,
             Message = "The email must be set for all requests")]
@@ -51,8 +53,9 @@ namespace NIHR.CRN.CPMS.Common
             Message = "The UUID must be set for all requests")]
         private partial void LogUuidHeaderNotSet();
 
-        public async virtual Task<TUserProfile> FetchAndUpdateUserProfileAsync(string? email, string? uuid,
-            string? firstName, string? lastName, string? orcId)
+
+        public virtual async Task<TUserProfile> FetchAndUpdateUserProfileAsync(string? email, string? uuid,
+            ExtendedUserAttributes? extendedUserAttributes)
         {
             TUserProfile result;
 
@@ -70,21 +73,14 @@ namespace NIHR.CRN.CPMS.Common
 
             var cacheKey = new CacheKey(uuid!);
 
-            void UpdatePersonalDetails(TRefPerson person)
-            {
-                person.FirstName = firstName ?? string.Empty;
-                person.LastName = lastName ?? string.Empty;
-                person.OrcId = orcId ?? string.Empty;
-            }
-
             // LastLogin timestamp is intentionally set only on a cache miss or on a profile change. The
             // cache ttl is 60 seconds, so the timestamp will still be updated frequently.
             if (_memoryCache.TryGetValue(cacheKey, out TUserProfile? cachedProfile))
             {
-                if (ProfileHasChanged(cachedProfile!.Person, email!, firstName, lastName, orcId))
+                if (ProfileHasChanged(cachedProfile!.Person, email!, extendedUserAttributes))
                 {
                     // If the personal details have changed, immediately update the record and cache...
-                    result = await UpdateOrCreateUserProfile(email!, uuid, UpdatePersonalDetails);
+                    result = await UpdateOrCreateUserProfile(email!, uuid, extendedUserAttributes);
                     _memoryCache.Set(cacheKey, result, _cacheTtl);
                 }
                 else
@@ -94,7 +90,7 @@ namespace NIHR.CRN.CPMS.Common
             }
             else
             {
-                result = await UpdateOrCreateUserProfile(email!, uuid, UpdatePersonalDetails);
+                result = await UpdateOrCreateUserProfile(email!, uuid, extendedUserAttributes);
                 _memoryCache.Set(cacheKey, result, _cacheTtl);
             }
 
@@ -102,13 +98,13 @@ namespace NIHR.CRN.CPMS.Common
             return result;
         }
 
-        private bool ProfileHasChanged(TRefPerson person, string email, string? firstName, string? lastName,
-            string? orcId)
+        private bool ProfileHasChanged(TRefPerson person, string email, ExtendedUserAttributes? extendedUserAttributes)
         {
-            return person.Email != email
-                   || person.FirstName != firstName
-                   || person.LastName != lastName
-                   || person.OrcId != orcId;
+            return person.Email != email ||
+                   (extendedUserAttributes != null &&
+                    (person.FirstName != extendedUserAttributes.FirstName
+                     || person.LastName != extendedUserAttributes.LastName
+                     || person.OrcId != extendedUserAttributes.Orcid));
         }
 
         private record CacheKey
@@ -122,7 +118,7 @@ namespace NIHR.CRN.CPMS.Common
         }
 
         protected async Task<TUserProfile> UpdateOrCreateUserProfile(string email, string? uuid = null,
-            Action<TRefPerson>? updatePersonalDetails = null)
+            ExtendedUserAttributes? extendedUserAttributes = null)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
@@ -146,7 +142,7 @@ namespace NIHR.CRN.CPMS.Common
                         LastLogin = DateTime.Now,
                         UserId = uuid,
                         Active = true,
-                        
+
                         Person = person ?? new TRefPerson
                         {
                             Active = true,
@@ -156,7 +152,7 @@ namespace NIHR.CRN.CPMS.Common
                             ModifiedBy = SystemUserId,
                             Acl = new TAcl
                             {
-                                LastUpdatedDate =  _timeProvider.GetLocalNow().DateTime,
+                                LastUpdatedDate = _timeProvider.GetLocalNow().DateTime,
                                 CreatedDate = _timeProvider.GetLocalNow().DateTime
                             }
                         }
@@ -184,7 +180,30 @@ namespace NIHR.CRN.CPMS.Common
                 });
             }
 
-            updatePersonalDetails?.Invoke(userProfile.Person);
+            if (extendedUserAttributes != null)
+            {
+                if (string.IsNullOrWhiteSpace(extendedUserAttributes.FirstName))
+                {
+                    LogFirstNameNotSet();
+                }
+                else
+                {
+                    userProfile.Person.FirstName = extendedUserAttributes.FirstName;
+                }
+
+                if (string.IsNullOrWhiteSpace(extendedUserAttributes.LastName))
+                {
+                    LogLastNameNotSet();
+                }
+                else
+                {
+                    userProfile.Person.LastName = extendedUserAttributes.LastName;
+                }
+
+                // OrcId is optional
+                userProfile.Person.OrcId = extendedUserAttributes.Orcid ?? string.Empty;
+            }
+
             userProfile.Person.Email = email;
             userProfile.LastLogin = _timeProvider.GetLocalNow().DateTime;
 
@@ -192,6 +211,5 @@ namespace NIHR.CRN.CPMS.Common
 
             return userProfile;
         }
-
     }
 }

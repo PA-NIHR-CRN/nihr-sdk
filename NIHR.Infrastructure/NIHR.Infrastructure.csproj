@@ -8,9 +8,9 @@
     <ItemGroup>
       <PackageReference Include="Amazon.Lambda.Logging.AspNetCore" Version="3.1.0" />
       <PackageReference Include="AWS.Logger.SeriLog" Version="3.4.3" />
-      <PackageReference Include="AWSSDK.Core" Version="3.7.500.78" />
-      <PackageReference Include="AWSSDK.SecretsManager" Version="3.7.302.31" />
-      <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.300.55" />
+      <PackageReference Include="AWSSDK.Core" Version="4.0.9.6" />
+      <PackageReference Include="AWSSDK.SecretsManager" Version="4.0.5.7" />
+      <PackageReference Include="AWSSDK.SimpleEmail" Version="4.0.3.7" />
       <PackageReference Include="contentful.csharp" Version="8.6.0" />
       <PackageReference Include="HtmlSanitizer" Version="9.0.892" />
       <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NIHR.Infrastructure.Interfaces;
 using NIHR.Infrastructure.Models;
@@ -14,11 +15,13 @@ namespace NIHR.Infrastructure.Services
     {
         private readonly IOptions<EmailSettings> _emailSettings;
         private readonly IAmazonSimpleEmailService _client;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(IOptions<EmailSettings> emailSettings, IAmazonSimpleEmailService client)
+        public EmailService(IOptions<EmailSettings> emailSettings, IAmazonSimpleEmailService client, ILogger<EmailService> logger)
         {
             _emailSettings = emailSettings;
             _client = client;
+            _logger = logger;
         }
 
         public async Task SendEmailAsync(string to, string subject, string body, CancellationToken cancellationToken = default)
@@ -30,6 +33,8 @@ namespace NIHR.Infrastructure.Services
         {
             var from = _emailSettings.Value.FromAddress;
             var sourceArn = _emailSettings.Value.SourceArn;
+            
+            _logger.LogInformation("SES Config - FromAddress: '{From}', SourceArn: '{SourceArn}'", from, sourceArn);
             
             var request = new SendEmailRequest
             {
@@ -52,6 +57,11 @@ namespace NIHR.Infrastructure.Services
             {
                 request.SourceArn = sourceArn;
                 request.ReturnPathArn = sourceArn;
+                _logger.LogInformation("SES SourceArn set on request: '{SourceArn}'", request.SourceArn);
+            }
+            else
+            {
+                _logger.LogWarning("SES SourceArn not set");
             }
 
             var response = await _client.SendEmailAsync(request, cancellationToken);

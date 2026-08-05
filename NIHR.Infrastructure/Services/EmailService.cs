@@ -51,6 +51,7 @@ namespace NIHR.Infrastructure.Services
             if (!string.IsNullOrWhiteSpace(sourceArn))
             {
                 request.SourceArn = sourceArn;
+                request.ReturnPathArn = sourceArn;
             }
 
             var response = await _client.SendEmailAsync(request, cancellationToken);

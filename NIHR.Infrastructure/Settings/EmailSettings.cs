@@ -7,8 +7,9 @@ namespace NIHR.Infrastructure.Settings
     public class EmailSettings : IValidatableObject
     {
         public const string SectionName = nameof(EmailSettings);
-        public string FromAddress { get; set; }
+        public string FromAddress { get; set; } = null!;
         public string? SourceArn { get; set; }
+        
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (string.IsNullOrWhiteSpace(FromAddress))

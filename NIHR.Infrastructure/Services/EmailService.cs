@@ -29,6 +29,8 @@ namespace NIHR.Infrastructure.Services
         public async Task<SendEmailResult> SendEmailWithResultAsync(string to, string subject, string body, CancellationToken cancellationToken = default)
         {
             var from = _emailSettings.Value.FromAddress;
+            var sourceArn = _emailSettings.Value.SourceArn;
+            
             var request = new SendEmailRequest
             {
                 Source = from,
@@ -45,6 +47,11 @@ namespace NIHR.Infrastructure.Services
                     }
                 }
             };
+
+            if (!string.IsNullOrWhiteSpace(sourceArn))
+            {
+                request.SourceArn = sourceArn;
+            }
 
             var response = await _client.SendEmailAsync(request, cancellationToken);
 

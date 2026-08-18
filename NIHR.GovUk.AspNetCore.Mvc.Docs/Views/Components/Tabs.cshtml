@@ -1,5 +1,14 @@
-﻿@{
+﻿@using NIHR.GovUk.AspNetCore.Mvc.Docs.TagHelpers
+
+@{
     Layout = "_LayoutComponents";
 }
 
-<p>TODO: Add tab component</p>
+<Tabs>
+    <Tab Id="abc" Caption="My First Tab">
+        <p>This is the content of my first tab</p>
+    </Tab>
+    <Tab Id="def" Caption="Another Tab">
+        <p>This is the content of my second tab</p>
+    </Tab>
+</Tabs>

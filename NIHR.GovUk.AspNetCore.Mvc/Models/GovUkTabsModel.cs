@@ -1,4 +1,4 @@
-﻿namespace NIHR.GovUk.AspNetCore.Mvc.Docs.Models;
+namespace NIHR.GovUk.AspNetCore.Mvc.Models;
 
 public record GovUkTabsModel(
     string Title,

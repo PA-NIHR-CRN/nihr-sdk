@@ -1,6 +1,6 @@
-﻿using NIHR.GovUk.AspNetCore.Mvc.Docs.Models;
+﻿using NIHR.GovUk.AspNetCore.Mvc.Models;
 
-namespace NIHR.GovUk.AspNetCore.Mvc.Docs.TagHelpers;
+namespace NIHR.GovUk.AspNetCore.Mvc.TagHelpers;
 
 public class TabsContext
 {

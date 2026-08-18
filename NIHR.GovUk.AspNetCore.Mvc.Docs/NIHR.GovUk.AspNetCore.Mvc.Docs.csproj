@@ -10,4 +10,8 @@
       <ProjectReference Include="..\NIHR.GovUk.AspNetCore.Mvc\NIHR.GovUk.AspNetCore.Mvc.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="TagHelpers\" />
+    </ItemGroup>
+
 </Project>

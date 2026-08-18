@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Html;
 
-namespace NIHR.GovUk.AspNetCore.Mvc.Docs.Models;
+namespace NIHR.GovUk.AspNetCore.Mvc.Models;
 
 public class GovUkTabModel
 {

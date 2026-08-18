@@ -1,14 +1,45 @@
-﻿@using NIHR.GovUk.AspNetCore.Mvc.Docs.TagHelpers
+﻿<govuk-tabs title="Contents">
 
-@{
-    Layout = "_LayoutComponents";
-}
+    <govuk-tab id="past-day" title="Past day" selected="true">
 
-<Tabs>
-    <Tab Id="abc" Caption="My First Tab">
-        <p>This is the content of my first tab</p>
-    </Tab>
-    <Tab Id="def" Caption="Another Tab">
-        <p>This is the content of my second tab</p>
-    </Tab>
-</Tabs>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Case manager</th>
+                <th scope="col" class="govuk-table__header">Cases opened</th>
+                <th scope="col" class="govuk-table__header">Cases closed</th>
+            </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">David Francis</td>
+                <td class="govuk-table__cell">3</td>
+                <td class="govuk-table__cell">0</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </govuk-tab>
+
+    <govuk-tab id="past-week" title="Past week">
+
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Case manager</th>
+                <th scope="col" class="govuk-table__header">Cases opened</th>
+                <th scope="col" class="govuk-table__header">Cases closed</th>
+            </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">David Francis</td>
+                <td class="govuk-table__cell">10</td>
+                <td class="govuk-table__cell">2</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </govuk-tab>
+
+</govuk-tabs>

@@ -1,0 +1,29 @@
+﻿@model NIHR.GovUk.AspNetCore.Mvc.Models.GovUkTabsModel
+
+<div class="govuk-tabs" data-module="govuk-tabs">
+
+    <h2 class="govuk-tabs__title">
+        @Model.Title
+    </h2>
+
+    <ul class="govuk-tabs__list">
+        @foreach (var tab in Model.Tabs)
+        {
+            <li class="govuk-tabs__list-item @(tab.Selected ? "govuk-tabs__list-item--selected" : "")">
+                <a class="govuk-tabs__tab" href="#@tab.Id">
+                    @tab.Title
+                </a>
+            </li>
+        }
+    </ul>
+
+    @foreach (var tab in Model.Tabs)
+    {
+        <div class="govuk-tabs__panel @(tab.Selected ? "" : "govuk-tabs__panel--hidden")"
+             id="@tab.Id">
+
+            @tab.Content
+
+        </div>
+    }
+</div>

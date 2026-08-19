@@ -1,0 +1,12 @@
+@model NIHR.GovUk.AspNetCore.Mvc.Models.GovUkRadioModel
+
+@{
+    var id = Guid.NewGuid().ToString("N");
+}
+
+<div class="govuk-radios__item">
+    <input autofocus="@Model.Autofocus" class="govuk-radios__input" name="@Model.Name" id="@id" type="radio" value="@Model.Value" @if(Model.IsSelected){<text>checked</text>}>
+    <label class="govuk-label govuk-radios__label" for="@id">
+        @Model.InnerContent
+    </label>
+</div>

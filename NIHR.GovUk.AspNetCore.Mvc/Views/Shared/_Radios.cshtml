@@ -1,0 +1,6 @@
+@using NIHR.GovUk.AspNetCore.Mvc.Views
+@model NIHR.GovUk.AspNetCore.Mvc.Models.GovUkRadiosModel
+
+<div class="govuk-radios @GovUkStylingHelper.GetRadioLayoutClass(Model.Layout)" data-module="govuk-radios">
+    @Model.InnerContent
+</div>

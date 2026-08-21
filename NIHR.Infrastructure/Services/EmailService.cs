@@ -21,12 +21,7 @@ namespace NIHR.Infrastructure.Services
             _client = client;
         }
 
-        public async Task SendEmailAsync(string to, string subject, string body, CancellationToken cancellationToken = default)
-        {
-            await SendEmailWithResultAsync(to, subject, body, cancellationToken);
-        }
-        
-        public async Task<SendEmailResult> SendEmailWithResultAsync(string to, string subject, string body, CancellationToken cancellationToken = default)
+        public async Task<SendEmailResult> SendEmailAsync(string to, string subject, string body, CancellationToken cancellationToken = default)
         {
             var from = _emailSettings.Value.FromAddress;
             var sourceArn = _emailSettings.Value.SourceArn;

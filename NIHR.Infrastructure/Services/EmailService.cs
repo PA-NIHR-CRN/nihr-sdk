@@ -5,6 +5,7 @@ using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Microsoft.Extensions.Options;
 using NIHR.Infrastructure.Interfaces;
+using NIHR.Infrastructure.Models;
 using NIHR.Infrastructure.Settings;
 
 namespace NIHR.Infrastructure.Services
@@ -20,9 +21,11 @@ namespace NIHR.Infrastructure.Services
             _client = client;
         }
 
-        public async Task SendEmailAsync(string to, string subject, string body, CancellationToken cancellationToken = default)
+        public async Task<SendEmailResult> SendEmailAsync(string to, string subject, string body, CancellationToken cancellationToken = default)
         {
             var from = _emailSettings.Value.FromAddress;
+            var sourceArn = _emailSettings.Value.SourceArn;
+            
             var request = new SendEmailRequest
             {
                 Source = from,
@@ -40,7 +43,17 @@ namespace NIHR.Infrastructure.Services
                 }
             };
 
-            await _client.SendEmailAsync(request, cancellationToken);
+            if (!string.IsNullOrWhiteSpace(sourceArn))
+            {
+                request.SourceArn = sourceArn;
+            }
+
+            var response = await _client.SendEmailAsync(request, cancellationToken);
+
+            return new SendEmailResult
+            {
+                MessageId = response.MessageId
+            };
         }
     }
 }

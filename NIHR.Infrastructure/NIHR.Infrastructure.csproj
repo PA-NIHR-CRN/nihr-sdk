@@ -11,7 +11,7 @@
       <PackageReference Include="AWSSDK.SecretsManager" Version="3.7.302.31" />
       <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.300.55" />
       <PackageReference Include="contentful.csharp" Version="7.5.3" />
-      <PackageReference Include="HtmlSanitizer" Version="8.0.865" />
+      <PackageReference Include="HtmlSanitizer" Version="9.0.892" />
       <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />

@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NIHR.Infrastructure.Configuration;
 using NIHR.Infrastructure.Settings;
+using Serilog;
+using Serilog.Formatting.Json;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -35,15 +37,26 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
 
-                if (IsRunningInLambda())
-                {
-                    loggingBuilder.AddLambdaLogger(loggerOptions);
-                }
-
                 if (Debugger.IsAttached || Environment.UserInteractive)
                 {
                     loggingBuilder.AddConsole().AddDebug();
                 }
+                else
+                {
+                    if (IsRunningInLambda())
+                    {
+                        loggingBuilder.AddLambdaLogger(loggerOptions);
+                    }
+                    else
+                    {
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.Console(new JsonFormatter())
+                            .CreateLogger();
+
+                        loggingBuilder.AddSerilog(logger);
+                    }
+                }
+
             });
 
             return services;
@@ -79,7 +92,6 @@ IHostEnvironment hostEnvironment)
         public static IConfigurationManager AddNihrConfiguration(this IConfigurationManager configuration, IServiceCollection services,
 IHostEnvironment hostEnvironment)
         {
-
             AddNihrConfiguration(configuration, hostEnvironment);
 
             var secretsManagerSettings = services.GetSectionAndValidate<AwsSecretsManagerSettings>(configuration).Value;

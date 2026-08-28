@@ -5,6 +5,8 @@ using NIHR.GovUk.AspNetCore.Mvc;
 using NIHR.GovUk.AspNetCore.Mvc.ContentManagement;
 using NIHR.Infrastructure.Interfaces;
 using NIHR.Infrastructure.Services;
+using NIHR.Infrastructure.Providers;
+
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -13,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddContentManagement(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddContentful(configuration);
-            services.AddScoped<IContentProvider, ContentfulService>();
+            services.AddScoped<IContentProvider, ContentfulProvider>();
 
             services.AddTransient((c) =>
             {

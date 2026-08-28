@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NIHR.CRN.CPMS.Abstractions"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NIHR.CRN.CPMS.Common.Tests", "NIHR.CRN.CPMS.Common.Tests\NIHR.CRN.CPMS.Common.Tests.csproj", "{D114F066-85A1-4EAF-9EFF-7BD76B2798B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NIHR.GovUk.AspNetCore.Mvc.Demo", "NIHR.GovUk.AspNetCore.Mvc.Demo\NIHR.GovUk.AspNetCore.Mvc.Demo.csproj", "{C93CE4F4-2555-4CC5-8DF5-DA1C9D8CBF50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NIHR.Application", "NIHR.Application\NIHR.Application.csproj", "{DB463CE4-5BDE-4D1F-82B2-545CE30A6D2B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +67,14 @@ Global
 		{D114F066-85A1-4EAF-9EFF-7BD76B2798B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D114F066-85A1-4EAF-9EFF-7BD76B2798B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D114F066-85A1-4EAF-9EFF-7BD76B2798B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C93CE4F4-2555-4CC5-8DF5-DA1C9D8CBF50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C93CE4F4-2555-4CC5-8DF5-DA1C9D8CBF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C93CE4F4-2555-4CC5-8DF5-DA1C9D8CBF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C93CE4F4-2555-4CC5-8DF5-DA1C9D8CBF50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB463CE4-5BDE-4D1F-82B2-545CE30A6D2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB463CE4-5BDE-4D1F-82B2-545CE30A6D2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB463CE4-5BDE-4D1F-82B2-545CE30A6D2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB463CE4-5BDE-4D1F-82B2-545CE30A6D2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

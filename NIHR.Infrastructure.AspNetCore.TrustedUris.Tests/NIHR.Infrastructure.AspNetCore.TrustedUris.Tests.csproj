@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\NIHR.Infrastructure.AspNetCore\NIHR.Infrastructure.AspNetCore.csproj" />
+      <ProjectReference Include="..\NIHR.Infrastructure.AspNetCore.TrustedUris\NIHR.Infrastructure.AspNetCore.TrustedUris.csproj" />
     </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using NIHR.Infrastructure.AspNetCore.TrustedUris;
 
-namespace NIHR.Infrastructure.AspNetCore.Tests;
+namespace NIHR.Infrastructure.AspNetCore.TrustedUris.Tests;
 
 public class TrustedUriValidatorTests
 {

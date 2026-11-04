@@ -21,7 +21,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NIHR.CRN.CPMS.Abstractions"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NIHR.CRN.CPMS.Common.Tests", "NIHR.CRN.CPMS.Common.Tests\NIHR.CRN.CPMS.Common.Tests.csproj", "{D114F066-85A1-4EAF-9EFF-7BD76B2798B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NIHR.Infrastructure.AspNetCore.Tests", "NIHR.Infrastructure.AspNetCore.Tests\NIHR.Infrastructure.AspNetCore.Tests.csproj", "{BD427B22-473B-43FC-B632-7D1CEB89C4FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NIHR.Infrastructure.AspNetCore.TrustedUris.Tests", "NIHR.Infrastructure.AspNetCore.TrustedUris.Tests\NIHR.Infrastructure.AspNetCore.TrustedUris.Tests.csproj", "{BD427B22-473B-43FC-B632-7D1CEB89C4FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NIHR.Infrastructure.AspNetCore.TrustedUris", "NIHR.Infrastructure.AspNetCore.TrustedUris\NIHR.Infrastructure.AspNetCore.TrustedUris.csproj", "{0690D67A-34F1-431B-BD76-7D4509F6FC68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{BD427B22-473B-43FC-B632-7D1CEB89C4FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD427B22-473B-43FC-B632-7D1CEB89C4FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD427B22-473B-43FC-B632-7D1CEB89C4FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0690D67A-34F1-431B-BD76-7D4509F6FC68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0690D67A-34F1-431B-BD76-7D4509F6FC68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0690D67A-34F1-431B-BD76-7D4509F6FC68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0690D67A-34F1-431B-BD76-7D4509F6FC68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

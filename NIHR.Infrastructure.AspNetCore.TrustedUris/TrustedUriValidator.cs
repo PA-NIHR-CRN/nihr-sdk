@@ -11,13 +11,13 @@ internal class TrustedUriValidator(IHttpContextAccessor httpContextAccessor, IOp
     {
         if (uri.IsAbsoluteUri)
         {
-            if (MatchesCurrentOrigin(uri) && options.Value.AllowCurrentAuthority)
+            if (MatchesCurrentOrigin(uri) && options.Value.AllowCurrentOrigin)
             {
                 return ValidationResult.Success;
             }
 
-            if (options.Value.AllowOrigins.Any(authority =>
-                    MatchesOriginSpec(uri, authority)))
+            if (options.Value.AllowOrigins.Any(allowedOrigin =>
+                    MatchesOriginSpec(uri, allowedOrigin)))
             {
                 return ValidationResult.Success;
             }
@@ -33,22 +33,22 @@ internal class TrustedUriValidator(IHttpContextAccessor httpContextAccessor, IOp
         return new ValidationResult("Relative URIs are not permitted");
     }
 
-    private bool MatchesOriginSpec(Uri uri, OriginSpec authority)
+    private bool MatchesOriginSpec(Uri uri, OriginSpec originSpec)
     {
-        return MatchesScheme(uri, authority) && MatchesAuthority(uri, authority) && MatchesPort(uri, authority);
+        return MatchesScheme(uri, originSpec) && MatchesHost(uri, originSpec) && MatchesPort(uri, originSpec);
     }
 
-    private bool MatchesPort(Uri uri, OriginSpec authority)
+    private bool MatchesPort(Uri uri, OriginSpec originSpec)
     {
-        var authorityPort = authority.Port ?? GetDefaultPort(uri.Scheme);
-        return authorityPort.HasValue && uri.Port == authorityPort.Value;
+        var originSpecPort = originSpec.Port ?? GetDefaultPort(uri.Scheme);
+        return originSpecPort.HasValue && uri.Port == originSpecPort.Value;
     }
 
-    private bool MatchesAuthority(Uri uri, OriginSpec originSpec)
+    private bool MatchesHost(Uri uri, OriginSpec originSpec)
     {
         return
-            string.Equals(uri.Host, originSpec.Authority, StringComparison.InvariantCultureIgnoreCase) ||
-            (originSpec.AllowSubAuthorities && uri.Host.EndsWith("." + originSpec.Authority,
+            string.Equals(uri.Host, originSpec.Host, StringComparison.InvariantCultureIgnoreCase) ||
+            (originSpec.AllowSubHosts && uri.Host.EndsWith("." + originSpec.Host,
                 StringComparison.InvariantCultureIgnoreCase));
     }
 
@@ -62,7 +62,7 @@ internal class TrustedUriValidator(IHttpContextAccessor httpContextAccessor, IOp
     {
         return httpContextAccessor.HttpContext != null && MatchesOriginSpec(uri, new OriginSpec
         {
-            Authority = httpContextAccessor.HttpContext.Request.Host.Host,
+            Host = httpContextAccessor.HttpContext.Request.Host.Host,
             Schemes = [httpContextAccessor.HttpContext.Request.Scheme],
             Port = httpContextAccessor.HttpContext.Request.Host.Port
         });

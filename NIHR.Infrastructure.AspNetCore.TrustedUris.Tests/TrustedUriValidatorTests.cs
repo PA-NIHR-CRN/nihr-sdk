@@ -42,7 +42,7 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = true
+            AllowCurrentOrigin = true
         });
 
         var result = validator.Validate(new Uri("https://app.example.com/return"));
@@ -55,7 +55,7 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = true
+            AllowCurrentOrigin = true
         });
 
         var result = validator.Validate(new Uri("HTTPS://APP.EXAMPLE.COM/return"));
@@ -68,7 +68,7 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = true
+            AllowCurrentOrigin = true
         });
 
         var result = validator.Validate(new Uri("http://app.example.com/return"));
@@ -81,7 +81,7 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false
+            AllowCurrentOrigin = false
         });
 
         var result = validator.Validate(new Uri("https://app.example.com/return"));
@@ -93,7 +93,7 @@ public class TrustedUriValidatorTests
     public void Validate_AllowsCurrentOriginWithConfiguredNonDefaultPort()
     {
         var validator = CreateValidator(
-            new TrustedUriSettings { AllowCurrentAuthority = true },
+            new TrustedUriSettings { AllowCurrentOrigin = true },
             requestPort: 8443);
 
         var result = validator.Validate(new Uri("https://app.example.com:8443/return"));
@@ -102,16 +102,16 @@ public class TrustedUriValidatorTests
     }
 
     [Fact]
-    public void Validate_AllowsOriginMatchingConfiguredAuthority()
+    public void Validate_AllowsOriginMatchingConfiguredHost()
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["https"]
                 }
             ]
@@ -123,16 +123,16 @@ public class TrustedUriValidatorTests
     }
 
     [Fact]
-    public void Validate_MatchesConfiguredSchemeAndAuthorityCaseInsensitively()
+    public void Validate_MatchesConfiguredSchemeAndHostCaseInsensitively()
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["HTTPS"]
                 }
             ]
@@ -148,12 +148,12 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["https"]
                 }
             ]
@@ -169,12 +169,12 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["http"]
                 }
             ]
@@ -190,12 +190,12 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["https"],
                     Port = 8443
                 }
@@ -212,12 +212,12 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["https"],
                     Port = 8443
                 }
@@ -234,14 +234,14 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["https"],
-                    AllowSubAuthorities = true
+                    AllowSubHosts = true
                 }
             ]
         });
@@ -256,14 +256,14 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["https"],
-                    AllowSubAuthorities = true
+                    AllowSubHosts = true
                 }
             ]
         });
@@ -278,14 +278,14 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["https"],
-                    AllowSubAuthorities = false
+                    AllowSubHosts = false
                 }
             ]
         });
@@ -296,18 +296,18 @@ public class TrustedUriValidatorTests
     }
 
     [Fact]
-    public void Validate_RejectsHostThatOnlyEndsWithConfiguredAuthorityText()
+    public void Validate_RejectsHostThatOnlyEndsWithConfiguredHostText()
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["https"],
-                    AllowSubAuthorities = true
+                    AllowSubHosts = true
                 }
             ]
         });
@@ -318,16 +318,16 @@ public class TrustedUriValidatorTests
     }
 
     [Fact]
-    public void Validate_RejectsConfiguredAuthorityWithUnlistedScheme()
+    public void Validate_RejectsConfiguredHostWithUnlistedScheme()
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false,
+            AllowCurrentOrigin = false,
             AllowOrigins =
             [
                 new OriginSpec
                 {
-                    Authority = "trusted.example.com",
+                    Host = "trusted.example.com",
                     Schemes = ["https"]
                 }
             ]
@@ -343,7 +343,7 @@ public class TrustedUriValidatorTests
     {
         var validator = CreateValidator(new TrustedUriSettings
         {
-            AllowCurrentAuthority = false
+            AllowCurrentOrigin = false
         });
 
         var result = validator.Validate(new Uri("https://untrusted.example.com/return"));

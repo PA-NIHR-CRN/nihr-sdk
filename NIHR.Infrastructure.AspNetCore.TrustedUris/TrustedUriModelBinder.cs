@@ -12,36 +12,35 @@ internal class TrustedUriModelBinder : IModelBinder
         var redirectValidator =
             context.ActionContext.HttpContext.RequestServices.GetRequiredService<ITrustedUriValidator>();
         var value = context.ValueProvider.GetValue(context.ModelName).FirstValue;
-        
-        if (string.IsNullOrEmpty(value))
+
+        if (!string.IsNullOrEmpty(value))
         {
-            return Task.CompletedTask;
-        }
-        
-        if (Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out var uri))
-        {
-            if (context.ModelMetadata is DefaultModelMetadata defaultModelMetadata && defaultModelMetadata.Attributes
-                    .Attributes.OfType<AllowUntrustedUrisAttribute>().Any())
+            if (Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out var uri))
             {
-                context.Result = ModelBindingResult.Success(uri);
-            }
-            
-            var validationResult = redirectValidator.Validate(uri);
-            if (validationResult == ValidationResult.Success)
-            {
-                context.Result = ModelBindingResult.Success(uri);
+                if (context.ModelMetadata is DefaultModelMetadata defaultModelMetadata && defaultModelMetadata
+                        .Attributes
+                        .Attributes.OfType<AllowUntrustedUrisAttribute>().Any())
+                {
+                    context.Result = ModelBindingResult.Success(uri);
+                }
+
+                var validationResult = redirectValidator.Validate(uri);
+                if (validationResult == ValidationResult.Success)
+                {
+                    context.Result = ModelBindingResult.Success(uri);
+                }
+                else
+                {
+                    throw new UntrustedUriException(validationResult!.ErrorMessage!);
+                }
             }
             else
             {
-                throw new UntrustedUriException(validationResult!.ErrorMessage!);
+                context.Result = ModelBindingResult.Failed();
+                context.ModelState.AddModelError(context.ModelName, "URL is not well-formed");
             }
         }
-        else
-        {
-            context.Result = ModelBindingResult.Failed();
-            context.ModelState.AddModelError(context.ModelName, "URL is not well-formed");
-        }
-        
+
         return Task.CompletedTask;
     }
 }
